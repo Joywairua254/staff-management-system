@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Staff Management Dashboard</ui:define>
+
+    <ui:define name="content">
+        <h2 style="margin-top: 0; font-weight: 600; color: #1e3a8a;">Dashboard Overview</h2>
+        
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
+            <!-- Staff Card -->
+            <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #3b82f6;">
+                <div>
+                    <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Total Staff</h3>
+                    <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.staffList.size()}</span>
+                </div>
+                <div style="background-color: #eff6ff; padding: 12px; border-radius: 50%; color: #3b82f6;">
+                    <i class="pi pi-users" style="font-size: 24px;"></i>
+                </div>
+            </div>
+
+            <!-- Departments Card -->
+            <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #10b981;">
+                <div>
+                    <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Departments</h3>
+                    <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.deptCount}</span>
+                </div>
+                <div style="background-color: #ecfdf5; padding: 12px; border-radius: 50%; color: #10b981;">
+                    <i class="pi pi-sitemap" style="font-size: 24px;"></i>
+                </div>
+            </div>
+
+            <!-- Roles Card -->
+            <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #f59e0b;">
+                <div>
+                    <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Roles</h3>
+                    <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.roleCount}</span>
+                </div>
+                <div style="background-color: #fffbeb; padding: 12px; border-radius: 50%; color: #f59e0b;">
+                    <i class="pi pi-id-card" style="font-size: 24px;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 25px; min-height: 200px;">
+            <h3 style="margin-top: 0; color: #374151;">Welcome to your Dashboard</h3>
+            <p style="color: #6b7280; line-height: 1.5;">
+                Use the sidebar navigation on the left to manage system entities. You can view existing staff members, register new staff, track roles, assign departments, and manage attendance logs.
+            </p>
+            <p:separator style="margin: 20px 0;" />
+            <div style="display: flex; gap: 10px;">
+                <p:button value="View Staff Directory" outcome="/stafflist.xhtml" icon="pi pi-users" styleClass="ui-button-outlined" />
+                <p:button value="Add New Staff" outcome="/staffcreate.xhtml" icon="pi pi-plus" styleClass="ui-button-primary" />
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

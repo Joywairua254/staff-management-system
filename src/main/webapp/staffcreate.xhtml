@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="addStaffDialog" header="Add New Staff Member" widgetVar="addStaffDialog" 
+              modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="600px"
+              responsive="true">
+        <h:form id="addStaffForm">
+            <h:panelGrid columns="3" cellpadding="6" style="width: 100%;" columnClasses="form-label-col, form-input-col, form-msg-col">
+                
+                <h:outputLabel for="firstName" value="First Name:" style="font-weight: bold;" />
+                <p:inputText id="firstName" value="#{staffBean.newStaff.firstName}" required="true" requiredMessage="First Name is required" style="width: 100%;" />
+                <p:message for="firstName" display="icon" />
+
+                <h:outputLabel for="lastName" value="Last Name:" style="font-weight: bold;" />
+                <p:inputText id="lastName" value="#{staffBean.newStaff.lastName}" required="true" requiredMessage="Last Name is required" style="width: 100%;" />
+                <p:message for="lastName" display="icon" />
+
+                <h:outputLabel for="email" value="Email:" style="font-weight: bold;" />
+                <p:inputText id="email" value="#{staffBean.newStaff.email}" required="true" requiredMessage="Email is required" validatorMessage="Invalid email format" style="width: 100%;">
+                    <f:validateRegex pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" />
+                </p:inputText>
+                <p:message for="email" display="icon" />
+
+                <h:outputLabel for="phone" value="Phone Number:" style="font-weight: bold;" />
+                <p:inputText id="phone" value="#{staffBean.newStaff.phone}" required="true" requiredMessage="Phone is required" style="width: 100%;" />
+                <p:message for="phone" display="icon" />
+
+                <h:outputLabel for="deptId" value="Department:" style="font-weight: bold;" />
+                <p:selectOneMenu id="deptId" value="#{staffBean.newStaff.deptId}" required="true" requiredMessage="Department is required" style="width: 100%;">
+                    <f:selectItem itemLabel="Select Department" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{staffBean.departments}" var="d" itemLabel="#{d.dept_name}" itemValue="#{d.dept_id}" />
+                </p:selectOneMenu>
+                <p:message for="deptId" display="icon" />
+
+                <h:outputLabel for="roleId" value="Role:" style="font-weight: bold;" />
+                <p:selectOneMenu id="roleId" value="#{staffBean.newStaff.roleId}" required="true" requiredMessage="Role is required" style="width: 100%;">
+                    <f:selectItem itemLabel="Select Role" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{staffBean.roles}" var="r" itemLabel="#{r.role_name}" itemValue="#{r.role_id}" />
+                </p:selectOneMenu>
+                <p:message for="roleId" display="icon" />
+
+            </h:panelGrid>
+
+            <div style="text-align: right; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+                <p:commandButton value="Save Staff"
+                                 action="#{staffBean.saveStaff}"
+                                 update="addStaffForm :staffListForm"
+                                 oncomplete="if (!args.validationFailed) PF('addStaffDialog').hide();"
+                                 icon="pi pi-save"
+                                 styleClass="ui-button-success"
+                                 style="width: 130px; margin-right: 10px;" />
+
+                <p:commandButton value="Cancel"
+                                 type="button"
+                                 onclick="PF('addStaffDialog').hide();"
+                                 icon="pi pi-times"
+                                 styleClass="ui-button-secondary"
+                                 style="width: 110px;" />
+            </div>
+        </h:form>
+    </p:dialog>
+</ui:composition>

@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Attendance Logs</ui:define>
+
+    <ui:define name="content">
+        <h:form id="attendanceForm">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
+                    <h2 style="margin: 0; font-weight: 600; color: #1e3a8a;">Attendance Management</h2>
+                    <p:commandButton value="Mark Attendance" 
+                                     icon="pi pi-calendar-plus" 
+                                     type="button" 
+                                     onclick="PF('markAttendanceDialog').show();" 
+                                     styleClass="ui-button-primary" />
+                </div>
+
+                <p:dataTable id="attendanceTable" var="att" value="#{attendanceBean.attendanceList}" 
+                              paginator="true" rows="10"
+                              paginatorPosition="bottom"
+                              styleClass="ui-datatable-striped ui-datatable-gridlines"
+                              emptyMessage="No attendance logs found in database">
+
+                    <p:column headerText="Log ID" style="width: 100px; text-align: center;" sortBy="#{att.attendance_id}">
+                        <h:outputText value="#{att.attendance_id}" />
+                    </p:column>
+
+                    <p:column headerText="Staff Name" sortBy="#{attendanceBean.getStaffName(att.staff_id)}" filterBy="#{attendanceBean.getStaffName(att.staff_id)}" filterMatchMode="contains">
+                        <h:outputText value="#{attendanceBean.getStaffName(att.staff_id)}" />
+                    </p:column>
+
+                    <p:column headerText="Date" sortBy="#{att.attendance_date}" style="text-align: center;">
+                        <h:outputText value="#{att.attendance_date}">
+                            <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Check In" style="text-align: center;">
+                        <h:outputText value="#{att.check_in}">
+                            <f:convertDateTime type="localDateTime" pattern="HH:mm:ss" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Check Out" style="text-align: center;">
+                        <h:outputText value="#{att.check_out}">
+                            <f:convertDateTime type="localDateTime" pattern="HH:mm:ss" />
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </h:form>
+
+        <ui:include src="/attendancecreate.xhtml" />
+
+        <h:outputScript target="body" rendered="#{param.openDialog == 'true'}">
+            $(document).ready(function() {
+                PF('markAttendanceDialog').show();
+            });
+        </h:outputScript>
+    </ui:define>
+</ui:composition>

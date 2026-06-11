@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title><ui:insert name="title">Staff Management System</ui:insert></title>
+    <style>
+        body {
+            font-family: 'Outfit', 'Inter', 'Segoe UI', Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            color: #1f2937;
+        }
+        .header-panel {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 15px 30px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: none !important;
+            border-radius: 0 !important;
+        }
+        .header-title {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .user-welcome {
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dashboard-container {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+        .sidebar {
+            width: 260px;
+            background-color: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            padding: 20px 10px;
+            flex-shrink: 0;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            background-color: #f9fafb;
+            overflow-y: auto;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02);
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        /* Style adjustments for PrimeFaces components */
+        .ui-panelmenu .ui-panelmenu-header {
+            background: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+        .ui-panelmenu .ui-panelmenu-header a {
+            color: #334155 !important;
+            font-weight: 600 !important;
+        }
+        .ui-panelmenu .ui-menuitem-link {
+            padding: 10px 15px !important;
+        }
+        .ui-panelmenu .ui-menuitem-text {
+            color: #475569 !important;
+        }
+        .ui-panelmenu .ui-state-hover {
+            background-color: #f1f5f9 !important;
+        }
+        .logout-btn .ui-button {
+            background-color: rgba(255,255,255,0.2) !important;
+            border: 1px solid rgba(255,255,255,0.4) !important;
+            color: white !important;
+            transition: all 0.2s ease;
+        }
+        .logout-btn .ui-button:hover {
+            background-color: rgba(255,255,255,0.3) !important;
+            border-color: white !important;
+        }
+        /* Custom Submenu Icons via PrimeIcons CSS */
+        .menu-staff .ui-panelmenu-header .ui-menuitem-text::before {
+            content: "\e941";
+            font-family: 'primeicons';
+            margin-right: 10px;
+            font-weight: normal;
+            vertical-align: middle;
+            font-size: 16px;
+        }
+        .menu-roles .ui-panelmenu-header .ui-menuitem-text::before {
+            content: "\e9aa";
+            font-family: 'primeicons';
+            margin-right: 10px;
+            font-weight: normal;
+            vertical-align: middle;
+            font-size: 16px;
+        }
+        .menu-departments .ui-panelmenu-header .ui-menuitem-text::before {
+            content: "\e96e";
+            font-family: 'primeicons';
+            margin-right: 10px;
+            font-weight: normal;
+            vertical-align: middle;
+            font-size: 16px;
+        }
+        .menu-attendance .ui-panelmenu-header .ui-menuitem-text::before {
+            content: "\e927";
+            font-family: 'primeicons';
+            margin-right: 10px;
+            font-weight: normal;
+            vertical-align: middle;
+            font-size: 16px;
+        }
+    </style>
+</h:head>
+<h:body>
+    <!-- Modern Header -->
+    <h:form id="headerForm">
+        <div class="header-panel">
+            <h1 class="header-title">Staff Management System</h1>
+            <div style="flex-grow: 1; display: flex; justify-content: center; align-items: center;">
+                <img src="#{request.contextPath}/resources/images/new-mspace-logo.jpeg" style="height: 42px; border-radius: 4px; background-color: white; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.15);" alt="Mspace Logo" />
+            </div>
+            <div class="user-welcome">
+                <i class="pi pi-user" style="font-size: 14px;"></i>
+                <h:outputText value="Welcome, #{loginbean.username}!" style="font-weight: 600;" />
+                <p:commandButton value="Logout" 
+                                 action="#{loginbean.logout}" 
+                                 styleClass="logout-btn ui-button-flat ui-button-plain"
+                                 icon="pi pi-sign-out" />
+            </div>
+        </div>
+    </h:form>
+
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <h:form id="sidebarForm">
+                <p:panelMenu style="width: 100%;">
+                    <p:submenu label="Staff" styleClass="menu-staff">
+                        <p:menuitem value="View Staff" outcome="/stafflist.xhtml" icon="pi pi-align-justify" />
+                        <p:menuitem value="Add Staff" outcome="/stafflist.xhtml?openDialog=true" icon="pi pi-user-plus" />
+                    </p:submenu>
+
+                    <p:submenu label="Roles" styleClass="menu-roles">
+                        <p:menuitem value="View Roles" outcome="/rolelist.xhtml" icon="pi pi-list" />
+                        <p:menuitem value="Add Role" outcome="/rolelist.xhtml?openDialog=true" icon="pi pi-plus" />
+                    </p:submenu>
+
+                    <p:submenu label="Departments" styleClass="menu-departments">
+                        <p:menuitem value="View Departments" outcome="/departmentlist.xhtml" icon="pi pi-folder" />
+                        <p:menuitem value="Add Department" outcome="/departmentlist.xhtml?openDialog=true" icon="pi pi-folder-open" />
+                    </p:submenu>
+
+                    <p:submenu label="Attendance" styleClass="menu-attendance">
+                        <p:menuitem value="View Attendance" outcome="/attendancelist.xhtml" icon="pi pi-eye" />
+                        <p:menuitem value="Mark Attendance" outcome="/attendancelist.xhtml?openDialog=true" icon="pi pi-calendar-plus" />
+                    </p:submenu>
+                </p:panelMenu>
+            </h:form>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Alert Messages -->
+            <p:messages id="globalMsgs" showDetail="true" closable="true" style="margin-bottom: 20px;">
+                <p:autoUpdate />
+            </p:messages>
+
+            <ui:insert name="content">
+                <!-- Default Content -->
+                <h2>Content Area</h2>
+            </ui:insert>
+        </div>
+    </div>
+</h:body>
+</html>
