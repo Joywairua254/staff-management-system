@@ -35,7 +35,7 @@ public class Loginbean implements Serializable{
             if (user != null) {
                 loggedIn = true;
                 this.usertype = user.getUsertype();
-                return "dashboard?faces-redirect=true"; // ✅ redirect
+                return "dashboard?faces-redirect=true"; // redirect
             } else {
                 loggedIn = false;
                 this.usertype = 0;
