@@ -28,6 +28,11 @@ public class user_accountService {
         return userDAO.getAllUsers();
     }
 
+    // Business logic: delete user account
+    public void deleteUser(int userId) throws SQLException {
+        userDAO.deleteUser(userId);
+    }
+
     // ✅ New method: validate login credentials
     public boolean validateUser(String username, String password) throws SQLException {
         String sql = "SELECT * FROM user_account WHERE username=? AND password=?";
@@ -37,5 +42,26 @@ public class user_accountService {
             ResultSet rs = stmt.executeQuery();
             return rs.next(); // true if a match is found
         }
+    }
+
+    // Authenticate and return user_account containing usertype
+    public user_account login(String username, String password) throws SQLException {
+        String sql = "SELECT * FROM user_account WHERE username=? AND password=?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    user_account user = new user_account();
+                    user.setUser_id(rs.getInt("user_id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setPassword(rs.getString("password"));
+                    user.setStaffId(rs.getInt("staff_id"));
+                    user.setUsertype(rs.getInt("usertype"));
+                    return user;
+                }
+            }
+        }
+        return null;
     }
 }

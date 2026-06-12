@@ -92,6 +92,7 @@ public class AttendanceBean implements Serializable {
     }
 
     public List<Staff> getStaffList() {
+        loadStaff();
         return staffList;
     }
 

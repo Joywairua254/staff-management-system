@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog header="Create User Account" 
+              widgetVar="addUserDialog" 
+              modal="true" 
+              responsive="true" 
+              width="450" 
+              showEffect="fade" 
+              hideEffect="fade">
+              
+        <h:form id="createUserForm">
+            <p:messages id="dialogMsgs" showDetail="true" closable="true" />
+            
+            <div class="ui-fluid">
+                <div style="margin-bottom: 15px;">
+                    <p:outputLabel for="username" value="Username" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                    <p:inputText id="username" value="#{userAccountBean.newUser.username}" required="true" placeholder="Enter username" />
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <p:outputLabel for="password" value="Password" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                    <p:password id="password" value="#{userAccountBean.newUser.password}" required="true" placeholder="Enter password" feedback="false" />
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <p:outputLabel for="staffMember" value="Staff Member" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                    <p:selectOneMenu id="staffMember" value="#{userAccountBean.newUser.staffId}" required="true">
+                        <f:selectItem itemLabel="Select Staff Member" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{userAccountBean.staffList}" var="s" 
+                                       itemLabel="#{s.firstName} #{s.lastName} (#{s.email})" itemValue="#{s.id}" />
+                    </p:selectOneMenu>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <p:outputLabel for="usertype" value="User Type" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                    <p:selectOneMenu id="usertype" value="#{userAccountBean.newUser.usertype}" required="true">
+                        <f:selectItem itemLabel="Normal Staff" itemValue="0" />
+                        <f:selectItem itemLabel="Admin" itemValue="1" />
+                    </p:selectOneMenu>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #e5e7eb; padding-top: 15px; margin-top: 15px;">
+                <p:commandButton value="Cancel" 
+                                 type="button" 
+                                 onclick="PF('addUserDialog').hide();" 
+                                 styleClass="ui-button-outlined ui-button-secondary" />
+                <p:commandButton value="Create Account" 
+                                 action="#{userAccountBean.saveUser}" 
+                                 update="createUserForm :usersForm" 
+                                 oncomplete="if (!args.validationFailed) PF('addUserDialog').hide();" 
+                                 styleClass="ui-button-primary" />
+            </div>
+        </h:form>
+    </p:dialog>
+</ui:composition>

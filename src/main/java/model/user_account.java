@@ -6,6 +6,7 @@ public class user_account {
     private String password;
     private int roleId;
     private int staffId;
+    private int usertype;
 
     // Full constructor with all fields
     public user_account(int user_id, String username, String password, int roleId, int staffId) {
@@ -61,6 +62,14 @@ public class user_account {
         this.staffId = staffId;
     }
 
+    public int getUsertype() {
+        return usertype;
+    }
+
+    public void setUsertype(int usertype) {
+        this.usertype = usertype;
+    }
+
     @Override
     public String toString() {
         return "user_account{" +
@@ -69,6 +78,7 @@ public class user_account {
                 ", password='" + password + '\'' +
                 ", roleId=" + roleId +
                 ", staffId=" + staffId +
+                ", usertype=" + usertype +
                 '}';
     }
 }

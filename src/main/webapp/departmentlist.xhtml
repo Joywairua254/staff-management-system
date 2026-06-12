@@ -15,7 +15,8 @@
                                      icon="pi pi-plus" 
                                      type="button" 
                                      onclick="PF('addDeptDialog').show();" 
-                                     styleClass="ui-button-primary" />
+                                     styleClass="ui-button-primary"
+                                     rendered="#{loginbean.usertype == 1}" />
                 </div>
 
                 <p:dataTable id="deptTable" var="d" value="#{departmentBean.departmentList}" 
@@ -37,7 +38,7 @@
 
         <ui:include src="/departmentcreate.xhtml" />
 
-        <h:outputScript target="body" rendered="#{param.openDialog == 'true'}">
+        <h:outputScript target="body" rendered="#{param.openDialog == 'true' and loginbean.usertype == 1}">
             $(document).ready(function() {
                 PF('addDeptDialog').show();
             });

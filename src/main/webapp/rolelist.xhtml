@@ -15,7 +15,8 @@
                                      icon="pi pi-plus" 
                                      type="button" 
                                      onclick="PF('addRoleDialog').show();" 
-                                     styleClass="ui-button-primary" />
+                                     styleClass="ui-button-primary"
+                                     rendered="#{loginbean.usertype == 1}" />
                 </div>
 
                 <p:dataTable id="rolesTable" var="r" value="#{roleBean.rolesList}" 
@@ -32,7 +33,7 @@
                         <h:outputText value="#{r.role_name}" />
                     </p:column>
 
-                    <p:column headerText="Actions" style="width: 100px; text-align: center;">
+                    <p:column headerText="Actions" style="width: 100px; text-align: center;" rendered="#{loginbean.usertype == 1}">
                         <p:commandButton icon="pi pi-trash"
                                          action="#{roleBean.delete(r)}"
                                          update="rolesForm"
@@ -45,7 +46,7 @@
 
         <ui:include src="/rolecreate.xhtml" />
 
-        <h:outputScript target="body" rendered="#{param.openDialog == 'true'}">
+        <h:outputScript target="body" rendered="#{param.openDialog == 'true' and loginbean.usertype == 1}">
             $(document).ready(function() {
                 PF('addRoleDialog').show();
             });

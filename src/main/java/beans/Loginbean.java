@@ -16,6 +16,7 @@ public class Loginbean implements Serializable{
     private String username;
     private String password;
     private boolean loggedIn;
+    private int usertype; // 1 for admin, 0 for normal user
 
     private user_accountService userService;
 
@@ -30,11 +31,14 @@ public class Loginbean implements Serializable{
 
    public String login() {
         try {
-            if (userService.validateUser(username, password)) {
+            model.user_account user = userService.login(username, password);
+            if (user != null) {
                 loggedIn = true;
+                this.usertype = user.getUsertype();
                 return "dashboard?faces-redirect=true"; // ✅ redirect
             } else {
                 loggedIn = false;
+                this.usertype = 0;
                 FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Invalid username or password", null));
@@ -60,4 +64,6 @@ public class Loginbean implements Serializable{
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
     public boolean isLoggedIn() { return loggedIn; }
+    public int getUsertype() { return usertype; }
+    public void setUsertype(int usertype) { this.usertype = usertype; }
 }

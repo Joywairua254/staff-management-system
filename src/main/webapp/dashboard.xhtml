@@ -11,7 +11,7 @@
         
         <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
             <!-- Staff Card -->
-            <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #3b82f6;">
+            <h:panelGroup layout="block" styleClass="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #3b82f6; margin-bottom: 0;" rendered="#{loginbean.usertype == 1}">
                 <div>
                     <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Total Staff</h3>
                     <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.staffList.size()}</span>
@@ -19,10 +19,10 @@
                 <div style="background-color: #eff6ff; padding: 12px; border-radius: 50%; color: #3b82f6;">
                     <i class="pi pi-users" style="font-size: 24px;"></i>
                 </div>
-            </div>
+            </h:panelGroup>
 
             <!-- Departments Card -->
-            <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #10b981;">
+            <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #10b981; margin-bottom: 0;">
                 <div>
                     <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Departments</h3>
                     <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.deptCount}</span>
@@ -33,7 +33,7 @@
             </div>
 
             <!-- Roles Card -->
-            <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #f59e0b;">
+            <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #f59e0b; margin-bottom: 0;">
                 <div>
                     <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Roles</h3>
                     <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.roleCount}</span>
@@ -47,13 +47,19 @@
         <div class="card" style="margin-top: 25px; min-height: 200px;">
             <h3 style="margin-top: 0; color: #374151;">Welcome to your Dashboard</h3>
             <p style="color: #6b7280; line-height: 1.5;">
-                Use the sidebar navigation on the left to manage system entities. You can view existing staff members, register new staff, track roles, assign departments, and manage attendance logs.
+                <h:outputText value="Use the sidebar navigation on the left to manage system entities. You can view existing staff members, register new staff, track roles, assign departments, and manage attendance logs." rendered="#{loginbean.usertype == 1}" />
+                <h:outputText value="Use the sidebar navigation on the left to manage your activities. You can mark your attendance, view roles, and view departments." rendered="#{loginbean.usertype == 0}" />
             </p>
             <p:separator style="margin: 20px 0;" />
-            <div style="display: flex; gap: 10px;">
+            <h:panelGroup layout="block" style="display: flex; gap: 10px;" rendered="#{loginbean.usertype == 1}">
                 <p:button value="View Staff Directory" outcome="/stafflist.xhtml" icon="pi pi-users" styleClass="ui-button-outlined" />
                 <p:button value="Add New Staff" outcome="/staffcreate.xhtml" icon="pi pi-plus" styleClass="ui-button-primary" />
-            </div>
+            </h:panelGroup>
+            <h:panelGroup layout="block" style="display: flex; gap: 10px;" rendered="#{loginbean.usertype == 0}">
+                <p:button value="Mark Attendance" outcome="/attendancelist.xhtml?openDialog=true" icon="pi pi-calendar-plus" styleClass="ui-button-primary" />
+                <p:button value="View Roles" outcome="/rolelist.xhtml" icon="pi pi-list" styleClass="ui-button-outlined" />
+                <p:button value="View Departments" outcome="/departmentlist.xhtml" icon="pi pi-folder" styleClass="ui-button-outlined" />
+            </h:panelGroup>
         </div>
     </ui:define>
 </ui:composition>

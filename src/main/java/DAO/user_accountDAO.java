@@ -14,13 +14,21 @@ public class user_accountDAO {
 
     // Add a new user account
     public void addUser(user_account user) throws SQLException {
-        String sql = "INSERT INTO user_account (user_id, username, password, role_id, staff_id) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO user_account (username, password, usertype, staff_id) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, user.getUser_id());
-            stmt.setString(2, user.getUsername());
-            stmt.setString(3, user.getPassword());
-            stmt.setInt(4, user.getRoleId());     // role_id field
-            stmt.setInt(5, user.getStaffId());    // staff_id field
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPassword());
+            stmt.setInt(3, user.getUsertype());   // usertype field
+            stmt.setInt(4, user.getStaffId());    // staff_id field
+            stmt.executeUpdate();
+        }
+    }
+
+    // Delete a user account
+    public void deleteUser(int userId) throws SQLException {
+        String sql = "DELETE FROM user_account WHERE user_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
             stmt.executeUpdate();
         }
     }
@@ -38,9 +46,10 @@ public class user_accountDAO {
                     rs.getInt("user_id"),
                     rs.getString("username"),
                     rs.getString("password"),
-                    rs.getInt("role_id"),
+                    0, // roleId set to default 0
                     rs.getInt("staff_id")   // include staff_id in constructor
                 );
+                user.setUsertype(rs.getInt("usertype")); // map usertype
                 user_accountList.add(user);
             }
         }
