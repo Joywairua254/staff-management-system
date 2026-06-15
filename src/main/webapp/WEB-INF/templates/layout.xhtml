@@ -179,27 +179,18 @@
                 <p:panelMenu style="width: 100%;">
                     <p:submenu label="Staff" styleClass="menu-staff" rendered="#{loginbean.usertype == 1}">
                         <p:menuitem value="View Staff" outcome="/stafflist.xhtml" icon="pi pi-align-justify" />
-                        <p:menuitem value="Add Staff" outcome="/stafflist.xhtml?openDialog=true" icon="pi pi-user-plus" />
                     </p:submenu>
 
-                    <p:submenu label="Roles" styleClass="menu-roles">
+                    <p:submenu label="Roles" styleClass="menu-roles" rendered="#{loginbean.usertype == 1}">
                         <p:menuitem value="View Roles" outcome="/rolelist.xhtml" icon="pi pi-list" />
-                        <p:menuitem value="Add Role" outcome="/rolelist.xhtml?openDialog=true" icon="pi pi-plus" rendered="#{loginbean.usertype == 1}" />
                     </p:submenu>
 
-                    <p:submenu label="Departments" styleClass="menu-departments">
+                    <p:submenu label="Departments" styleClass="menu-departments" rendered="#{loginbean.usertype == 1}">
                         <p:menuitem value="View Departments" outcome="/departmentlist.xhtml" icon="pi pi-folder" />
-                        <p:menuitem value="Add Department" outcome="/departmentlist.xhtml?openDialog=true" icon="pi pi-folder-open" rendered="#{loginbean.usertype == 1}" />
                     </p:submenu>
 
-                    <p:submenu label="Attendance" styleClass="menu-attendance">
-                        <p:menuitem value="View Attendance" outcome="/attendancelist.xhtml" icon="pi pi-eye" rendered="#{loginbean.usertype == 1}" />
-                        <p:menuitem value="Mark Attendance" outcome="/attendancelist.xhtml?openDialog=true" icon="pi pi-calendar-plus" />
-                    </p:submenu>
-
-                    <p:submenu label="User Accounts" styleClass="menu-users" rendered="#{loginbean.usertype == 1}">
-                        <p:menuitem value="View User Accounts" outcome="/userlist.xhtml" icon="pi pi-users" />
-                        <p:menuitem value="Add User Account" outcome="/userlist.xhtml?openDialog=true" icon="pi pi-user-plus" />
+                    <p:submenu label="Attendance" styleClass="menu-attendance" rendered="#{loginbean.usertype == 1}">
+                        <p:menuitem value="View Attendance" outcome="/attendancelist.xhtml" icon="pi pi-eye" />
                     </p:submenu>
                 </p:panelMenu>
             </h:form>

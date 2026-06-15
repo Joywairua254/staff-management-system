@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog id="editDeptDialog" header="Edit Department" widgetVar="editDeptDialog" 
+              modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500px"
+              responsive="true">
+        <h:form id="editDeptForm">
+            <h:panelGrid columns="3" cellpadding="6" style="width: 100%;">
+                
+                <h:outputLabel for="deptId" value="Department ID:" style="font-weight: bold;" />
+                <p:inputText id="deptId" value="#{departmentBean.selectedDept.dept_id}" disabled="true" style="width: 100%;" />
+                <p:message for="deptId" display="icon" />
+
+                <h:outputLabel for="deptName" value="Department Name:" style="font-weight: bold;" />
+                <p:inputText id="deptName" value="#{departmentBean.selectedDept.dept_name}" required="true" requiredMessage="Department Name is required" style="width: 100%;" />
+                <p:message for="deptName" display="icon" />
+
+            </h:panelGrid>
+
+            <div style="text-align: right; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+                <p:commandButton value="Update Department"
+                                 action="#{departmentBean.updateDepartment}"
+                                 update="editDeptForm :deptForm"
+                                 oncomplete="if (!args.validationFailed) PF('editDeptDialog').hide();"
+                                 icon="pi pi-save"
+                                 styleClass="ui-button-success"
+                                 style="width: 160px; margin-right: 10px;" />
+
+                <p:commandButton value="Cancel"
+                                 type="button"
+                                 onclick="PF('editDeptDialog').hide();"
+                                 icon="pi pi-times"
+                                 styleClass="ui-button-secondary"
+                                 style="width: 110px;" />
+            </div>
+        </h:form>
+    </p:dialog>
+</ui:composition>

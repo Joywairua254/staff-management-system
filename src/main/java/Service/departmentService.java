@@ -20,4 +20,12 @@ public class departmentService {
     public List<department> listAllDepartments() throws SQLException {
         return departmentDAO.getAllDepartments();
     }
+
+    public void updateDepartment(department d) throws SQLException {
+        departmentDAO.updateDepartment(d);
+    }
+
+    public void deleteDepartment(int id) throws SQLException {
+        departmentDAO.deleteDepartment(id);
+    }
 }

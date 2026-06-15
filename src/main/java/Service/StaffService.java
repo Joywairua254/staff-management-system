@@ -24,4 +24,12 @@ public class StaffService {
     public boolean deleteStaff(int id) throws SQLException {
         return staffDAO.deleteStaff(id);
     }
+
+    public boolean updateStaff(Staff staff) throws SQLException {
+        return staffDAO.updateStaff(staff);
+    }
+
+    public Staff getStaffById(int id) throws SQLException {
+        return staffDAO.getStaffById(id);
+    }
 }

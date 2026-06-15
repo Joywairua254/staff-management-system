@@ -44,4 +44,13 @@ public class roleDAO {
             stmt.executeUpdate();
         }
     }
+
+    public void updateRole(role r) throws SQLException {
+        String sql = "UPDATE role SET role_name = ? WHERE role_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, r.getRole_name());
+            stmt.setInt(2, r.getRole_id());
+            stmt.executeUpdate();
+        }
+    }
 }

@@ -33,7 +33,13 @@
                         <h:outputText value="#{r.role_name}" />
                     </p:column>
 
-                    <p:column headerText="Actions" style="width: 100px; text-align: center;" rendered="#{loginbean.usertype == 1}">
+                    <p:column headerText="Actions" style="width: 130px; text-align: center;" rendered="#{loginbean.usertype == 1}">
+                        <p:commandButton icon="pi pi-pencil"
+                                         action="#{roleBean.prepareEdit(r)}"
+                                         update=":editRoleForm"
+                                         oncomplete="PF('editRoleDialog').show();"
+                                         styleClass="ui-button-warning ui-button-flat"
+                                         style="margin-right: 5px;" />
                         <p:commandButton icon="pi pi-trash"
                                          action="#{roleBean.delete(r)}"
                                          update="rolesForm"
@@ -45,6 +51,7 @@
         </h:form>
 
         <ui:include src="/rolecreate.xhtml" />
+        <ui:include src="/roleedit.xhtml" />
 
         <h:outputScript target="body" rendered="#{param.openDialog == 'true' and loginbean.usertype == 1}">
             $(document).ready(function() {

@@ -19,6 +19,7 @@ public class RoleBean implements Serializable {
 
     private List<role> rolesList;
     private role newRole;
+    private role selectedRole;
     private roleService roleService;
 
     @PostConstruct
@@ -30,10 +31,12 @@ public class RoleBean implements Serializable {
                 new FacesMessage(FacesMessage.SEVERITY_ERROR, "Database Connection Error", "Could not connect to the database."));
             rolesList = new java.util.ArrayList<>();
             newRole = new role();
+            selectedRole = new role();
             return;
         }
         loadRoles();
         newRole = new role();
+        selectedRole = new role();
     }
 
     public void loadRoles() {
@@ -61,6 +64,14 @@ public class RoleBean implements Serializable {
         this.newRole = newRole;
     }
 
+    public role getSelectedRole() {
+        return selectedRole;
+    }
+
+    public void setSelectedRole(role selectedRole) {
+        this.selectedRole = selectedRole;
+    }
+
     public String saveRole() {
         try {
             roleService.addRole(newRole);
@@ -74,6 +85,24 @@ public class RoleBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error saving role", e.getMessage()));
             return null;
+        }
+    }
+
+    public void prepareEdit(role r) {
+        this.selectedRole = r;
+    }
+
+    public void updateRole() {
+        try {
+            Connection conn = DBConnection.getConnection();
+            new roleService(conn).updateRole(selectedRole);
+            loadRoles();
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Role updated successfully!"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error updating role", e.getMessage()));
         }
     }
 

@@ -24,4 +24,8 @@ public class roleService {
     public void deleteRole(int id) throws SQLException {
         roleDAO.deleteRole(id);
     }
+
+    public void updateRole(role r) throws SQLException {
+        roleDAO.updateRole(r);
+    }
 }

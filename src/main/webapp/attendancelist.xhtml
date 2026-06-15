@@ -13,12 +13,7 @@
             <h:panelGroup rendered="#{loginbean.usertype == 1}" layout="block">
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
-                        <h2 style="margin: 0; font-weight: 600; color: #1e3a8a;">Attendance Management</h2>
-                        <p:commandButton value="Mark Attendance" 
-                                         icon="pi pi-calendar-plus" 
-                                         type="button" 
-                                         onclick="PF('markAttendanceDialog').show();" 
-                                         styleClass="ui-button-primary" />
+                        <h2 style="margin: 0; font-weight: 600; color: #1e3a8a;">Attendance logs</h2>
                     </div>
 
                     <p:dataTable id="attendanceTable" var="att" value="#{attendanceBean.attendanceList}" 
@@ -56,30 +51,17 @@
                 </div>
             </h:panelGroup>
 
-            <!-- Normal User View: Can only mark attendance, cannot view previous logs -->
-            <h:panelGroup rendered="#{loginbean.usertype == 0}" layout="block">
+            <!-- Fallback for unauthorized access -->
+            <h:panelGroup rendered="#{loginbean.usertype != 1}" layout="block">
                 <div class="card" style="text-align: center; padding: 50px 30px;">
-                    <i class="pi pi-calendar-plus" style="font-size: 4rem; color: #3b82f6; margin-bottom: 20px; display: block;"></i>
-                    <h2 style="margin: 0 0 10px 0; color: #1e3a8a; font-weight: 600;">Mark Your Attendance</h2>
+                    <i class="pi pi-exclamation-triangle" style="font-size: 4rem; color: #f59e0b; margin-bottom: 20px; display: block;"></i>
+                    <h2 style="margin: 0 0 10px 0; color: #1e3a8a; font-weight: 600;">Access Denied</h2>
                     <p style="color: #6b7280; max-width: 480px; margin: 0 auto 25px auto; line-height: 1.6;">
-                        Submit your daily check-in and check-out times. Note that you are not authorized to view previous attendance logs.
+                        You are not authorized to view this page. Please use the dashboard to mark your attendance.
                     </p>
-                    <p:commandButton value="Mark Attendance Now" 
-                                     icon="pi pi-calendar-plus" 
-                                     type="button" 
-                                     onclick="PF('markAttendanceDialog').show();" 
-                                     styleClass="ui-button-primary" 
-                                     style="font-size: 15px; padding: 5px 15px;" />
+                    <p:button value="Go to Dashboard" outcome="/dashboard.xhtml" styleClass="ui-button-primary" />
                 </div>
             </h:panelGroup>
         </h:form>
-
-        <ui:include src="/attendancecreate.xhtml" />
-
-        <h:outputScript target="body" rendered="#{param.openDialog == 'true'}">
-            $(document).ready(function() {
-                PF('markAttendanceDialog').show();
-            });
-        </h:outputScript>
     </ui:define>
 </ui:composition>

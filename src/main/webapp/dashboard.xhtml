@@ -2,64 +2,193 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/WEB-INF/templates/layout.xhtml">
 
     <ui:define name="title">Staff Management Dashboard</ui:define>
 
     <ui:define name="content">
-        <h2 style="margin-top: 0; font-weight: 600; color: #1e3a8a;">Dashboard Overview</h2>
-        
-        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
-            <!-- Staff Card -->
-            <h:panelGroup layout="block" styleClass="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #3b82f6; margin-bottom: 0;" rendered="#{loginbean.usertype == 1}">
-                <div>
-                    <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Total Staff</h3>
-                    <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.staffList.size()}</span>
+        <!-- ADMIN DASHBOARD -->
+        <h:panelGroup rendered="#{loginbean.usertype == 1}" layout="block">
+            <h2 style="margin-top: 0; font-weight: 600; color: #1e3a8a;">Dashboard Overview</h2>
+            
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
+                <!-- Staff Card -->
+                <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #3b82f6; margin-bottom: 0;">
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Total Staff</h3>
+                        <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.staffList.size()}</span>
+                    </div>
+                    <div style="background-color: #eff6ff; padding: 12px; border-radius: 50%; color: #3b82f6;">
+                        <i class="pi pi-users" style="font-size: 24px;"></i>
+                    </div>
                 </div>
-                <div style="background-color: #eff6ff; padding: 12px; border-radius: 50%; color: #3b82f6;">
-                    <i class="pi pi-users" style="font-size: 24px;"></i>
-                </div>
-            </h:panelGroup>
 
-            <!-- Departments Card -->
-            <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #10b981; margin-bottom: 0;">
-                <div>
-                    <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Departments</h3>
-                    <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.deptCount}</span>
+                <!-- Departments Card -->
+                <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #10b981; margin-bottom: 0;">
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Departments</h3>
+                        <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.deptCount}</span>
+                    </div>
+                    <div style="background-color: #ecfdf5; padding: 12px; border-radius: 50%; color: #10b981;">
+                        <i class="pi pi-sitemap" style="font-size: 24px;"></i>
+                    </div>
                 </div>
-                <div style="background-color: #ecfdf5; padding: 12px; border-radius: 50%; color: #10b981;">
-                    <i class="pi pi-sitemap" style="font-size: 24px;"></i>
+
+                <!-- Roles Card -->
+                <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #f59e0b; margin-bottom: 0;">
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Roles</h3>
+                        <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.roleCount}</span>
+                    </div>
+                    <div style="background-color: #fffbeb; padding: 12px; border-radius: 50%; color: #f59e0b;">
+                        <i class="pi pi-id-card" style="font-size: 24px;"></i>
+                    </div>
                 </div>
             </div>
 
-            <!-- Roles Card -->
-            <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #f59e0b; margin-bottom: 0;">
-                <div>
-                    <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Roles</h3>
-                    <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{staffBean.roleCount}</span>
-                </div>
-                <div style="background-color: #fffbeb; padding: 12px; border-radius: 50%; color: #f59e0b;">
-                    <i class="pi pi-id-card" style="font-size: 24px;"></i>
+            <div class="card" style="margin-top: 25px; min-height: 200px;">
+                <h3 style="margin-top: 0; color: #374151;">Welcome to your Dashboard</h3>
+                <p style="color: #6b7280; line-height: 1.5;">
+                    Use the sidebar navigation on the left to manage system entities. You can view existing staff members, register new staff, track roles, assign departments, and view attendance logs.
+                </p>
+                <p:separator style="margin: 20px 0;" />
+                <div style="display: flex; gap: 10px;">
+                    <p:button value="View Staff Directory" outcome="/stafflist.xhtml" icon="pi pi-users" styleClass="ui-button-outlined" />
+                    <p:button value="View Attendance" outcome="/attendancelist.xhtml" icon="pi pi-eye" styleClass="ui-button-primary" />
                 </div>
             </div>
-        </div>
+        </h:panelGroup>
 
-        <div class="card" style="margin-top: 25px; min-height: 200px;">
-            <h3 style="margin-top: 0; color: #374151;">Welcome to your Dashboard</h3>
-            <p style="color: #6b7280; line-height: 1.5;">
-                <h:outputText value="Use the sidebar navigation on the left to manage system entities. You can view existing staff members, register new staff, track roles, assign departments, and manage attendance logs." rendered="#{loginbean.usertype == 1}" />
-                <h:outputText value="Use the sidebar navigation on the left to manage your activities. You can mark your attendance, view roles, and view departments." rendered="#{loginbean.usertype == 0}" />
-            </p>
-            <p:separator style="margin: 20px 0;" />
-            <h:panelGroup layout="block" style="display: flex; gap: 10px;" rendered="#{loginbean.usertype == 1}">
-                <p:button value="View Staff Directory" outcome="/stafflist.xhtml" icon="pi pi-users" styleClass="ui-button-outlined" />
-                <p:button value="Add New Staff" outcome="/staffcreate.xhtml" icon="pi pi-plus" styleClass="ui-button-primary" />
-            </h:panelGroup>
-            <h:panelGroup layout="block" style="display: flex; gap: 10px;" rendered="#{loginbean.usertype == 0}">
-                <p:button value="Mark Attendance" outcome="/attendancelist.xhtml?openDialog=true" icon="pi pi-calendar-plus" styleClass="ui-button-primary" />
-                <p:button value="View Roles" outcome="/rolelist.xhtml" icon="pi pi-list" styleClass="ui-button-outlined" />
-                <p:button value="View Departments" outcome="/departmentlist.xhtml" icon="pi pi-folder" styleClass="ui-button-outlined" />
-            </h:panelGroup>
-        </div>
+        <!-- STAFF DASHBOARD -->
+        <h:panelGroup rendered="#{loginbean.usertype == 0}" layout="block">
+            <h2 style="margin-top: 0; font-weight: 600; color: #1e3a8a;">My Dashboard</h2>
+            
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
+                <!-- Profile Card -->
+                <div class="card" style="flex: 2; min-width: 350px;">
+                    <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <i class="pi pi-user-edit" style="font-size: 20px; color: #3b82f6;"></i> Personal Profile
+                    </h3>
+                    <h:form id="profileForm" style="margin-top: 15px;">
+                        <div class="ui-fluid">
+                            <div style="margin-bottom: 15px;">
+                                <p:outputLabel value="Full Name (Read-Only)" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                <p:inputText value="#{loginbean.currentStaff.firstName} #{loginbean.currentStaff.lastName}" disabled="true" />
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <p:outputLabel value="Department (Read-Only)" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                <p:inputText value="#{loginbean.departmentName}" disabled="true" />
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <p:outputLabel value="Role (Read-Only)" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                <p:inputText value="#{loginbean.roleName}" disabled="true" />
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <p:outputLabel for="email" value="Email Address" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                <p:inputText id="email" value="#{loginbean.currentStaff.email}" required="true" requiredMessage="Email is required" />
+                                <p:message for="email" />
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <p:outputLabel for="phone" value="Phone Number" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                <p:inputText id="phone" value="#{loginbean.currentStaff.phone}" required="true" requiredMessage="Phone is required" />
+                                <p:message for="phone" />
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px; text-align: right;">
+                            <p:commandButton value="Save Profile Details" 
+                                             action="#{loginbean.saveProfile}" 
+                                             update="@form"
+                                             icon="pi pi-save" 
+                                             styleClass="ui-button-success" 
+                                             style="width: 200px;" />
+                        </div>
+                    </h:form>
+                </div>
+
+                <!-- Real-time Attendance Card -->
+                <div class="card" style="flex: 1; min-width: 280px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <i class="pi pi-clock" style="font-size: 20px; color: #3b82f6;"></i> Attendance Marker
+                        </h3>
+                        
+                        <div style="text-align: center; margin: 30px 0;">
+                            <span style="font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600; display: block; margin-bottom: 5px;">Today's Date</span>
+                            <span style="font-size: 20px; font-weight: 700; color: #1f2937; display: block;">
+                                <h:outputText value="#{java.time.LocalDate.now()}">
+                                    <f:convertDateTime type="localDate" pattern="EEEE, MMMM dd, yyyy" />
+                                </h:outputText>
+                            </span>
+                        </div>
+
+                        <h:form id="attendanceActionForm">
+                            <!-- Variable containing today's attendance -->
+                            <ui:param name="todayAtt" value="#{attendanceBean.getTodayAttendance(loginbean.staffId)}" />
+                            
+                            <!-- Case 1: Not Checked In -->
+                            <h:panelGroup rendered="#{todayAtt == null}" layout="block" style="text-align: center; padding: 10px;">
+                                <p:commandButton value="Check In Now" 
+                                                 action="#{attendanceBean.checkIn(loginbean.staffId)}" 
+                                                 update="@form"
+                                                 styleClass="ui-button-success" 
+                                                 icon="pi pi-sign-in" 
+                                                 style="padding: 10px; font-size: 16px; font-weight: 600; width: 100%; border-radius: 6px;" />
+                                <p style="color: #6b7280; margin-top: 15px; font-size: 13px;">Click to record your daily check-in time.</p>
+                            </h:panelGroup>
+
+                            <!-- Case 2: Checked In, Not Checked Out -->
+                            <h:panelGroup rendered="#{todayAtt != null and todayAtt.check_out == null}" layout="block" style="text-align: center; padding: 10px;">
+                                <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 12px; margin-bottom: 20px; color: #16a34a;">
+                                    <i class="pi pi-check-circle" style="font-size: 18px; margin-right: 5px; vertical-align: middle;"></i>
+                                    Checked In today at: 
+                                    <strong style="display: block; font-size: 18px; margin-top: 5px;">
+                                        <h:outputText value="#{todayAtt.check_in}">
+                                            <f:convertDateTime type="localDateTime" pattern="hh:mm:ss a" />
+                                        </h:outputText>
+                                    </strong>
+                                </div>
+                                <p:commandButton value="Check Out Now" 
+                                                 action="#{attendanceBean.checkOut(loginbean.staffId)}" 
+                                                 update="@form"
+                                                 styleClass="ui-button-danger" 
+                                                 icon="pi pi-sign-out" 
+                                                 style="padding: 10px; font-size: 16px; font-weight: 600; width: 100%; border-radius: 6px;" />
+                                <p style="color: #6b7280; margin-top: 15px; font-size: 13px;">Click to record your check-out and complete attendance.</p>
+                            </h:panelGroup>
+
+                            <!-- Case 3: Checked In & Checked Out -->
+                            <h:panelGroup rendered="#{todayAtt != null and todayAtt.check_out != null}" layout="block" style="text-align: center; padding: 10px;">
+                                <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 15px; text-align: left; color: #1e3a8a;">
+                                    <div style="font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 10px;">
+                                        <i class="pi pi-calendar-plus" style="font-size: 18px; color: #3b82f6;"></i> Daily Logs Complete
+                                    </div>
+                                    <div style="font-size: 13px; color: #4b5563; line-height: 1.6;">
+                                        Check In: <strong>
+                                            <h:outputText value="#{todayAtt.check_in}">
+                                                <f:convertDateTime type="localDateTime" pattern="hh:mm:ss a" />
+                                            </h:outputText>
+                                        </strong><br />
+                                        Check Out: <strong>
+                                            <h:outputText value="#{todayAtt.check_out}">
+                                                <f:convertDateTime type="localDateTime" pattern="hh:mm:ss a" />
+                                            </h:outputText>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <p style="color: #16a34a; margin-top: 15px; font-weight: 600; font-size: 14px;">
+                                    <i class="pi pi-verified" style="margin-right: 5px;"></i> Attendance Recorded!
+                                </p>
+                            </h:panelGroup>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:panelGroup>
     </ui:define>
 </ui:composition>

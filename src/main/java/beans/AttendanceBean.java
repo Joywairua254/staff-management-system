@@ -18,6 +18,12 @@ import model.attendance;
 import model.Staff;
 import util.DBConnection;
 
+// PrimeFaces Chart Imports
+import org.primefaces.model.charts.line.LineChartModel;
+import org.primefaces.model.charts.line.LineChartOptions;
+import org.primefaces.model.charts.line.LineChartDataSet;
+import org.primefaces.model.charts.ChartData;
+
 @Named("attendanceBean")
 @SessionScoped
 public class AttendanceBean implements Serializable {
@@ -29,6 +35,10 @@ public class AttendanceBean implements Serializable {
     private StaffService staffService;
     private LocalTime checkInTime;
     private LocalTime checkOutTime;
+
+    // Chart properties
+    private LineChartModel lineModel;
+    private int currentChartStaffId = -1;
 
     @PostConstruct
     public void init() {
@@ -80,6 +90,7 @@ public class AttendanceBean implements Serializable {
     }
 
     public List<attendance> getAttendanceList() {
+        loadAttendance(); // Ensure list is refreshed
         return attendanceList;
     }
 
@@ -128,6 +139,137 @@ public class AttendanceBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error marking attendance", e.getMessage()));
         }
+    }
+
+    // Real-time Check-In for normal staff
+    public void checkIn(int staffId) {
+        try {
+            Connection conn = DBConnection.getConnection();
+            attendanceService attServ = new attendanceService(conn);
+            
+            attendance todayAtt = attServ.getAttendanceForStaffDate(staffId, LocalDate.now());
+            if (todayAtt != null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning", "You have already checked in today!"));
+                return;
+            }
+            
+            attendance att = new attendance();
+            att.setStaff_id(staffId);
+            att.setAttendance_date(LocalDate.now());
+            att.setCheck_in(LocalDateTime.now());
+            att.setCheck_out(null);
+            
+            attServ.recordAttendance(att);
+            loadAttendance();
+            lineModel = null; // Clear cached chart model to refresh graph
+            
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Checked in successfully!"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error checking in", e.getMessage()));
+        }
+    }
+
+    // Real-time Check-Out for normal staff
+    public void checkOut(int staffId) {
+        try {
+            Connection conn = DBConnection.getConnection();
+            attendanceService attServ = new attendanceService(conn);
+            
+            attendance todayAtt = attServ.getAttendanceForStaffDate(staffId, LocalDate.now());
+            if (todayAtt == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No check-in record found for today."));
+                return;
+            }
+            
+            if (todayAtt.getCheck_out() != null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning", "You have already checked out today!"));
+                return;
+            }
+            
+            todayAtt.setCheck_out(LocalDateTime.now());
+            attServ.updateAttendance(todayAtt);
+            loadAttendance();
+            lineModel = null; // Clear cached chart model to refresh graph
+            
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Checked out successfully!"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error checking out", e.getMessage()));
+        }
+    }
+
+    // Fetch today's attendance for the logged-in staff
+    public attendance getTodayAttendance(int staffId) {
+        if (staffId <= 0) return null;
+        try {
+            Connection conn = DBConnection.getConnection();
+            attendanceService attServ = new attendanceService(conn);
+            return attServ.getAttendanceForStaffDate(staffId, LocalDate.now());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // Chart model getter for UI
+    public LineChartModel getAttendanceChart(int staffId) {
+        if (lineModel == null || currentChartStaffId != staffId) {
+            currentChartStaffId = staffId;
+            createLineModel(staffId);
+        }
+        return lineModel;
+    }
+
+    private void createLineModel(int staffId) {
+        lineModel = new LineChartModel();
+        ChartData data = new ChartData();
+
+        LineChartDataSet dataSet = new LineChartDataSet();
+        List<Object> values = new java.util.ArrayList<>();
+        List<String> labels = new java.util.ArrayList<>();
+
+        try {
+            Connection conn = DBConnection.getConnection();
+            List<attendance> list = new attendanceService(conn).getAttendanceForStaff(staffId);
+            // Limit to last 7 days of attendance
+            if (list.size() > 7) {
+                list = list.subList(list.size() - 7, list.size());
+            }
+
+            for (attendance att : list) {
+                labels.add(att.getAttendance_date().toString());
+                double hours = 0.0;
+                if (att.getCheck_in() != null && att.getCheck_out() != null) {
+                    long minutes = java.time.Duration.between(att.getCheck_in(), att.getCheck_out()).toMinutes();
+                    hours = minutes / 60.0;
+                }
+                values.add(hours);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        dataSet.setData(values);
+        dataSet.setLabel("Hours Worked");
+        dataSet.setFill(false);
+        dataSet.setBorderColor("rgb(59, 130, 246)");
+        dataSet.setTension(0.1);
+
+        data.addChartDataSet(dataSet);
+        data.setLabels(labels);
+
+        lineModel.setData(data);
+
+        LineChartOptions options = new LineChartOptions();
+        lineModel.setOptions(options);
     }
 
     public LocalTime getCheckInTime() {

@@ -44,6 +44,34 @@
 
             </h:panelGrid>
 
+            <p:separator style="margin: 15px 0;" />
+
+            <!-- User Account Option Wrapper -->
+            <h:panelGroup id="accountFieldsWrapper" layout="block">
+                <h:panelGrid columns="3" cellpadding="6" style="width: 100%;" columnClasses="form-label-col, form-input-col, form-msg-col">
+                    <h:outputLabel for="createAccount" value="Create User Account:" style="font-weight: bold;" />
+                    <p:selectBooleanCheckbox id="createAccount" value="#{staffBean.createAccount}">
+                        <p:ajax update="accountFieldsWrapper" />
+                    </p:selectBooleanCheckbox>
+                    <h:panelGroup />
+                    
+                    <h:outputLabel for="username" value="Username:" style="font-weight: bold;" rendered="#{staffBean.createAccount}" />
+                    <p:inputText id="username" value="#{staffBean.username}" required="#{staffBean.createAccount}" requiredMessage="Username is required" style="width: 100%;" rendered="#{staffBean.createAccount}" />
+                    <p:message for="username" display="icon" rendered="#{staffBean.createAccount}" />
+
+                    <h:outputLabel for="password" value="Password:" style="font-weight: bold;" rendered="#{staffBean.createAccount}" />
+                    <p:password id="password" value="#{staffBean.password}" required="#{staffBean.createAccount}" requiredMessage="Password is required" style="width: 100%;" rendered="#{staffBean.createAccount}" />
+                    <p:message for="password" display="icon" rendered="#{staffBean.createAccount}" />
+
+                    <h:outputLabel for="usertype" value="Account Type:" style="font-weight: bold;" rendered="#{staffBean.createAccount}" />
+                    <p:selectOneMenu id="usertype" value="#{staffBean.usertype}" required="#{staffBean.createAccount}" style="width: 100%;" rendered="#{staffBean.createAccount}">
+                        <f:selectItem itemLabel="Normal Staff" itemValue="0" />
+                        <f:selectItem itemLabel="Admin" itemValue="1" />
+                    </p:selectOneMenu>
+                    <p:message for="usertype" display="icon" rendered="#{staffBean.createAccount}" />
+                </h:panelGrid>
+            </h:panelGroup>
+
             <div style="text-align: right; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
                 <p:commandButton value="Save Staff"
                                  action="#{staffBean.saveStaff}"

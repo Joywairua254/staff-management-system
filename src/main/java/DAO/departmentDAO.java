@@ -42,4 +42,21 @@ public class departmentDAO {
         }
         return deptList;
     }
+
+    public void updateDepartment(department dept) throws SQLException {
+        String sql = "UPDATE department SET dept_name = ? WHERE dept_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, dept.getDept_name());
+            stmt.setInt(2, dept.getDept_id());
+            stmt.executeUpdate();
+        }
+    }
+
+    public void deleteDepartment(int id) throws SQLException {
+        String sql = "DELETE FROM department WHERE dept_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        }
+    }
 }

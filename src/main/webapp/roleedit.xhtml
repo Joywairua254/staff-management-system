@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog id="editRoleDialog" header="Edit Role" widgetVar="editRoleDialog" 
+              modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500px"
+              responsive="true">
+        <h:form id="editRoleForm">
+            <h:panelGrid columns="3" cellpadding="6" style="width: 100%;">
+                
+                <h:outputLabel for="roleId" value="Role ID:" style="font-weight: bold;" />
+                <p:inputText id="roleId" value="#{roleBean.selectedRole.role_id}" disabled="true" style="width: 100%;" />
+                <p:message for="roleId" display="icon" />
+
+                <h:outputLabel for="roleName" value="Role Name:" style="font-weight: bold;" />
+                <p:inputText id="roleName" value="#{roleBean.selectedRole.role_name}" required="true" requiredMessage="Role Name is required" style="width: 100%;" />
+                <p:message for="roleName" display="icon" />
+
+            </h:panelGrid>
+
+            <div style="text-align: right; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+                <p:commandButton value="Update Role"
+                                 action="#{roleBean.updateRole}"
+                                 update="editRoleForm :rolesForm"
+                                 oncomplete="if (!args.validationFailed) PF('editRoleDialog').hide();"
+                                 icon="pi pi-save"
+                                 styleClass="ui-button-success"
+                                 style="width: 130px; margin-right: 10px;" />
+
+                <p:commandButton value="Cancel"
+                                 type="button"
+                                 onclick="PF('editRoleDialog').hide();"
+                                 icon="pi pi-times"
+                                 styleClass="ui-button-secondary"
+                                 style="width: 110px;" />
+            </div>
+        </h:form>
+    </p:dialog>
+</ui:composition>
