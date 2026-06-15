@@ -189,6 +189,21 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Attendance Chart over time -->
+            <div style="display: flex; justify-content: center; margin-top: 25px;">
+                <div class="card" style="width: 100%; max-width: 900px; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+                    <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 12px; display: flex; align-items: center; gap: 10px; justify-content: center; font-weight: 600;">
+                        <i class="pi pi-chart-line" style="font-size: 20px; color: #3b82f6;"></i> Attendance Trends (Hours Worked)
+                    </h3>
+                    <div style="margin-top: 20px;">
+                        <p:lineChart model="#{attendanceBean.getAttendanceChart(loginbean.staffId)}" style="width: 100%; height: 350px;" />
+                    </div>
+                    <p style="color: #6b7280; font-size: 13px; text-align: center; margin-top: 15px; margin-bottom: 0;">
+                        Showing the total hours worked per day for the last 7 attendance records.
+                    </p>
+                </div>
+            </div>
         </h:panelGroup>
     </ui:define>
 </ui:composition>
