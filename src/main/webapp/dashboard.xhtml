@@ -58,6 +58,67 @@
                     <p:button value="View Attendance" outcome="/attendancelist.xhtml" icon="pi pi-eye" styleClass="ui-button-primary" />
                 </div>
             </div>
+
+            <!-- Announcement Section for Admin -->
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 25px;">
+                <!-- Post Announcement Form -->
+                <div class="card" style="flex: 1; min-width: 300px;">
+                    <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <i class="pi pi-megaphone" style="font-size: 20px; color: #3b82f6;"></i> Post New Announcement
+                    </h3>
+                    <h:form id="postAnnouncementForm">
+                        <div class="ui-fluid">
+                            <div style="margin-bottom: 15px;">
+                                <p:outputLabel for="annTitle" value="Announcement Title" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                <p:inputText id="annTitle" value="#{announcementBean.title}" required="true" requiredMessage="Title is required" placeholder="Enter title..." />
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <p:outputLabel for="annContent" value="Announcement Content" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                <p:inputTextarea id="annContent" value="#{announcementBean.content}" required="true" requiredMessage="Content is required" rows="4" placeholder="Enter message..." autoResize="false" />
+                            </div>
+                            <div style="text-align: right;">
+                                <p:commandButton value="Publish Announcement" 
+                                                 action="#{announcementBean.postAnnouncement(loginbean.username)}" 
+                                                 update="@form :manageAnnouncementsForm" 
+                                                 icon="pi pi-send" 
+                                                 styleClass="ui-button-primary" />
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+
+                <!-- Manage Announcements List -->
+                <div class="card" style="flex: 2; min-width: 350px;">
+                    <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <i class="pi pi-list" style="font-size: 20px; color: #3b82f6;"></i> Manage Announcements
+                    </h3>
+                    <h:form id="manageAnnouncementsForm">
+                        <p:dataTable value="#{announcementBean.announcementsList}" var="ann" 
+                                     paginator="true" rows="5" paginatorPosition="bottom"
+                                     reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
+                                     emptyMessage="No announcements posted yet.">
+                            <p:column headerText="Date" sortBy="#{ann.createdAt}" style="width: 150px;">
+                                <h:outputText value="#{ann.createdAt}">
+                                    <f:convertDateTime type="localDateTime" pattern="yyyy-MM-dd HH:mm" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Title" sortBy="#{ann.title}">
+                                <h:outputText value="#{ann.title}" style="font-weight: 600;" />
+                            </p:column>
+                            <p:column headerText="Posted By" style="width: 100px;">
+                                <h:outputText value="#{ann.postedBy}" />
+                            </p:column>
+                            <p:column headerText="Actions" style="width: 80px; text-align: center;">
+                                <p:commandButton icon="pi pi-trash" 
+                                                 action="#{announcementBean.deleteAnnouncement(ann.announcementId)}" 
+                                                 update="@form" 
+                                                 styleClass="ui-button-danger ui-button-flat" 
+                                                 onclick="return confirm('Delete this announcement?');" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </div>
+            </div>
         </h:panelGroup>
 
         <!-- STAFF DASHBOARD -->
@@ -65,12 +126,29 @@
             <h2 style="margin-top: 0; font-weight: 600; color: #1e3a8a;">My Dashboard</h2>
             
             <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
-                <!-- Profile Card -->
-                <div class="card" style="flex: 2; min-width: 350px;">
+                <!-- Profile Card (Left Column) -->
+                <div class="card" style="flex: 2; min-width: 350px; margin-bottom: 0;">
                     <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
                         <i class="pi pi-user-edit" style="font-size: 20px; color: #3b82f6;"></i> Personal Profile
                     </h3>
-                    <h:form id="profileForm" style="margin-top: 15px;">
+                    <h:form id="profileForm" style="margin-top: 15px;" enctype="multipart/form-data">
+                        <!-- Profile Image Section -->
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 25px; background-color: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                            <h:panelGroup rendered="#{not empty loginbean.currentStaff.profilePic}">
+                                <img src="data:image/jpeg;base64,#{loginbean.currentStaff.profilePic}" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 15px;" alt="Profile Picture" />
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{empty loginbean.currentStaff.profilePic}">
+                                <div style="width: 130px; height: 130px; border-radius: 50%; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; border: 4px dashed #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px;">
+                                    <i class="pi pi-user" style="font-size: 52px; color: #3b82f6;"></i>
+                                </div>
+                            </h:panelGroup>
+                            
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 250px;">
+                                <h:inputFile id="profileUpload" value="#{loginbean.profileFile}" style="font-size: 13px; color: #64748b; background-color: white; border: 1px solid #e2e8f0; padding: 6px 10px; border-radius: 6px; width: 100%; box-sizing: border-box;" />
+                                <p:commandButton value="Upload Photo" action="#{loginbean.uploadProfilePic}" ajax="false" icon="pi pi-upload" styleClass="ui-button-outlined" style="width: 100%; border-radius: 6px;" />
+                            </div>
+                        </div>
+
                         <div class="ui-fluid">
                             <div style="margin-bottom: 15px;">
                                 <p:outputLabel value="Full Name (Read-Only)" style="font-weight: 600; margin-bottom: 5px; display: block;" />
@@ -111,83 +189,148 @@
                     </h:form>
                 </div>
 
-                <!-- Real-time Attendance Card -->
-                <div class="card" style="flex: 1; min-width: 280px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
-                        <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                            <i class="pi pi-clock" style="font-size: 20px; color: #3b82f6;"></i> Attendance Marker
-                        </h3>
-                        
-                        <div style="text-align: center; margin: 30px 0;">
-                            <span style="font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600; display: block; margin-bottom: 5px;">Today's Date</span>
-                            <span style="font-size: 20px; font-weight: 700; color: #1f2937; display: block;">
-                                <h:outputText value="#{java.time.LocalDate.now()}">
-                                    <f:convertDateTime type="localDate" pattern="EEEE, MMMM dd, yyyy" />
-                                </h:outputText>
-                            </span>
-                        </div>
-
-                        <h:form id="attendanceActionForm">
-                            <!-- Variable containing today's attendance -->
-                            <ui:param name="todayAtt" value="#{attendanceBean.getTodayAttendance(loginbean.staffId)}" />
+                <!-- Right Column (Attendance & Tasks) -->
+                <div style="flex: 1.2; min-width: 300px; display: flex; flex-direction: column; gap: 20px;">
+                    <!-- Real-time Attendance Card -->
+                    <div class="card" style="margin-bottom: 0; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                                <i class="pi pi-clock" style="font-size: 20px; color: #3b82f6;"></i> Attendance Marker
+                            </h3>
                             
-                            <!-- Case 1: Not Checked In -->
-                            <h:panelGroup rendered="#{todayAtt == null}" layout="block" style="text-align: center; padding: 10px;">
-                                <p:commandButton value="Check In Now" 
-                                                 action="#{attendanceBean.checkIn(loginbean.staffId)}" 
-                                                 update="@form"
-                                                 styleClass="ui-button-success" 
-                                                 icon="pi pi-sign-in" 
-                                                 style="padding: 10px; font-size: 16px; font-weight: 600; width: 100%; border-radius: 6px;" />
-                                <p style="color: #6b7280; margin-top: 15px; font-size: 13px;">Click to record your daily check-in time.</p>
-                            </h:panelGroup>
+                            <div style="text-align: center; margin: 20px 0;">
+                                <span style="font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600; display: block; margin-bottom: 5px;">Today's Date</span>
+                                <span style="font-size: 18px; font-weight: 700; color: #1f2937; display: block;">
+                                    <h:outputText value="#{java.time.LocalDate.now()}">
+                                        <f:convertDateTime type="localDate" pattern="EEEE, MMMM dd, yyyy" />
+                                    </h:outputText>
+                                </span>
+                            </div>
 
-                            <!-- Case 2: Checked In, Not Checked Out -->
-                            <h:panelGroup rendered="#{todayAtt != null and todayAtt.check_out == null}" layout="block" style="text-align: center; padding: 10px;">
-                                <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 12px; margin-bottom: 20px; color: #16a34a;">
-                                    <i class="pi pi-check-circle" style="font-size: 18px; margin-right: 5px; vertical-align: middle;"></i>
-                                    Checked In today at: 
-                                    <strong style="display: block; font-size: 18px; margin-top: 5px;">
-                                        <h:outputText value="#{todayAtt.check_in}">
-                                            <f:convertDateTime type="localDateTime" pattern="hh:mm:ss a" />
-                                        </h:outputText>
-                                    </strong>
-                                </div>
-                                <p:commandButton value="Check Out Now" 
-                                                 action="#{attendanceBean.checkOut(loginbean.staffId)}" 
-                                                 update="@form"
-                                                 styleClass="ui-button-danger" 
-                                                 icon="pi pi-sign-out" 
-                                                 style="padding: 10px; font-size: 16px; font-weight: 600; width: 100%; border-radius: 6px;" />
-                                <p style="color: #6b7280; margin-top: 15px; font-size: 13px;">Click to record your check-out and complete attendance.</p>
-                            </h:panelGroup>
+                            <h:form id="attendanceActionForm">
+                                <!-- Variable containing today's attendance -->
+                                <ui:param name="todayAtt" value="#{attendanceBean.getTodayAttendance(loginbean.staffId)}" />
+                                
+                                <!-- Case 1: Not Checked In -->
+                                <h:panelGroup rendered="#{todayAtt == null}" layout="block" style="text-align: center; padding: 10px;">
+                                    <p:commandButton value="Check In Now" 
+                                                     action="#{attendanceBean.checkIn(loginbean.staffId)}" 
+                                                     update="@form"
+                                                     styleClass="ui-button-success" 
+                                                     icon="pi pi-sign-in" 
+                                                     style="padding: 10px; font-size: 16px; font-weight: 600; width: 100%; border-radius: 6px;" />
+                                    <p style="color: #6b7280; margin-top: 15px; font-size: 13px;">Click to record your daily check-in time.</p>
+                                </h:panelGroup>
 
-                            <!-- Case 3: Checked In & Checked Out -->
-                            <h:panelGroup rendered="#{todayAtt != null and todayAtt.check_out != null}" layout="block" style="text-align: center; padding: 10px;">
-                                <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 15px; text-align: left; color: #1e3a8a;">
-                                    <div style="font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 10px;">
-                                        <i class="pi pi-calendar-plus" style="font-size: 18px; color: #3b82f6;"></i> Daily Logs Complete
-                                    </div>
-                                    <div style="font-size: 13px; color: #4b5563; line-height: 1.6;">
-                                        Check In: <strong>
+                                <!-- Case 2: Checked In, Not Checked Out -->
+                                <h:panelGroup rendered="#{todayAtt != null and todayAtt.check_out == null}" layout="block" style="text-align: center; padding: 10px;">
+                                    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 12px; margin-bottom: 20px; color: #16a34a;">
+                                        <i class="pi pi-check-circle" style="font-size: 18px; margin-right: 5px; vertical-align: middle;"></i>
+                                        Checked In today at: 
+                                        <strong style="display: block; font-size: 18px; margin-top: 5px;">
                                             <h:outputText value="#{todayAtt.check_in}">
-                                                <f:convertDateTime type="localDateTime" pattern="hh:mm:ss a" />
-                                            </h:outputText>
-                                        </strong><br />
-                                        Check Out: <strong>
-                                            <h:outputText value="#{todayAtt.check_out}">
                                                 <f:convertDateTime type="localDateTime" pattern="hh:mm:ss a" />
                                             </h:outputText>
                                         </strong>
                                     </div>
-                                </div>
-                                <p style="color: #16a34a; margin-top: 15px; font-weight: 600; font-size: 14px;">
-                                    <i class="pi pi-verified" style="margin-right: 5px;"></i> Attendance Recorded!
-                                </p>
-                            </h:panelGroup>
+                                    <p:commandButton value="Check Out Now" 
+                                                     action="#{attendanceBean.checkOut(loginbean.staffId)}" 
+                                                     update="@form"
+                                                     styleClass="ui-button-danger" 
+                                                     icon="pi pi-sign-out" 
+                                                     style="padding: 10px; font-size: 16px; font-weight: 600; width: 100%; border-radius: 6px;" />
+                                    <p style="color: #6b7280; margin-top: 15px; font-size: 13px;">Click to record your check-out and complete attendance.</p>
+                                </h:panelGroup>
+
+                                <!-- Case 3: Checked In & Checked Out -->
+                                <h:panelGroup rendered="#{todayAtt != null and todayAtt.check_out != null}" layout="block" style="text-align: center; padding: 10px;">
+                                    <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 15px; text-align: left; color: #1e3a8a;">
+                                        <div style="font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 10px;">
+                                            <i class="pi pi-calendar-plus" style="font-size: 18px; color: #3b82f6;"></i> Daily Logs Complete
+                                        </div>
+                                        <div style="font-size: 13px; color: #4b5563; line-height: 1.6;">
+                                            Check In: <strong>
+                                                <h:outputText value="#{todayAtt.check_in}">
+                                                    <f:convertDateTime type="localDateTime" pattern="hh:mm:ss a" />
+                                                </h:outputText>
+                                            </strong><br />
+                                            Check Out: <strong>
+                                                <h:outputText value="#{todayAtt.check_out}">
+                                                    <f:convertDateTime type="localDateTime" pattern="hh:mm:ss a" />
+                                                </h:outputText>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                    <p style="color: #16a34a; margin-top: 15px; font-weight: 600; font-size: 14px;">
+                                        <i class="pi pi-verified" style="margin-right: 5px;"></i> Attendance Recorded!
+                                    </p>
+                                </h:panelGroup>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <!-- My Active Tasks Card -->
+                    <div class="card" style="margin-bottom: 0; flex-grow: 1;">
+                        <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <i class="pi pi-check-square" style="font-size: 20px; color: #3b82f6;"></i> My Active Tasks
+                        </h3>
+                        <h:form id="taskSubmissionForm" enctype="multipart/form-data">
+                            <p:dataTable value="#{taskBean.getActiveUserTasks(loginbean.staffId)}" var="task"
+                                         paginator="true" rows="3" paginatorPosition="bottom"
+                                         reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
+                                         emptyMessage="No active tasks assigned.">
+                                <p:column headerText="Task Detail">
+                                    <h:outputText value="#{task.description}" style="font-weight: 500;" />
+                                </p:column>
+                                <p:column headerText="Due Date" style="width: 100px; text-align: center; font-size: 11px;">
+                                    <h:outputText value="#{task.deadline}">
+                                        <f:convertDateTime type="localDateTime" pattern="MM-dd HH:mm" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Submission File" style="width: 220px; font-size: 11px;">
+                                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                                        <h:panelGroup rendered="#{not empty task.docName}">
+                                            <div style="display: flex; align-items: center; gap: 4px; color: #16a34a; font-weight: 600; background-color: #f0fdf4; padding: 4px 8px; border-radius: 4px; border: 1px solid #bbf7d0;">
+                                                <i class="pi pi-file" style="font-size: 12px;"></i>
+                                                <span style="max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="#{task.docName}">#{task.docName}</span>
+                                            </div>
+                                        </h:panelGroup>
+                                        <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+                                            <h:inputFile value="#{taskBean.taskFile}" style="font-size: 10px; width: 120px;" />
+                                            <h:commandButton value="Upload" action="#{taskBean.uploadTaskDoc(task.taskId)}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" style="padding: 3px 8px; background-color: #3b82f6; color: white; border: none; cursor: pointer; border-radius: 4px; font-size: 10px; font-weight: 600;" />
+                                        </div>
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
                         </h:form>
                     </div>
                 </div>
+            </div>
+
+            <!-- Announcements Feed Section -->
+            <div class="card" style="margin-top: 25px;">
+                <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <i class="pi pi-megaphone" style="font-size: 20px; color: #3b82f6;"></i> Company Announcements
+                </h3>
+                <p:dataTable value="#{announcementBean.announcementsList}" var="ann" 
+                             paginator="true" rows="5" paginatorPosition="bottom"
+                             reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
+                             emptyMessage="No announcements posted yet.">
+                    <p:column headerText="Date" sortBy="#{ann.createdAt}" style="width: 150px; text-align: center;">
+                        <h:outputText value="#{ann.createdAt}">
+                            <f:convertDateTime type="localDateTime" pattern="yyyy-MM-dd HH:mm" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Title" sortBy="#{ann.title}" style="font-weight: 600; width: 250px;">
+                        <h:outputText value="#{ann.title}" />
+                    </p:column>
+                    <p:column headerText="Message">
+                        <h:outputText value="#{ann.content}" style="white-space: pre-wrap;" />
+                    </p:column>
+                    <p:column headerText="Posted By" style="width: 120px; text-align: center;">
+                        <h:outputText value="#{ann.postedBy}" />
+                    </p:column>
+                </p:dataTable>
             </div>
 
             <!-- Attendance Chart over time -->

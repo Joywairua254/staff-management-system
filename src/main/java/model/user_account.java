@@ -21,6 +21,8 @@ public class user_account {
     public user_account() {
     }
 
+    private boolean isHashed;
+
     // Getters and Setters
     public int getUser_id() {
         return user_id;
@@ -70,6 +72,14 @@ public class user_account {
         this.usertype = usertype;
     }
 
+    public boolean isIsHashed() {
+        return isHashed;
+    }
+
+    public void setIsHashed(boolean isHashed) {
+        this.isHashed = isHashed;
+    }
+
     @Override
     public String toString() {
         return "user_account{" +
@@ -79,6 +89,7 @@ public class user_account {
                 ", roleId=" + roleId +
                 ", staffId=" + staffId +
                 ", usertype=" + usertype +
+                ", isHashed=" + isHashed +
                 '}';
     }
 }

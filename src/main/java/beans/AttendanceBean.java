@@ -272,6 +272,26 @@ public class AttendanceBean implements Serializable {
         lineModel.setOptions(options);
     }
 
+    public void verify(int attendanceId) {
+        try {
+            Connection conn = DBConnection.getConnection();
+            if (conn != null) {
+                attendanceService attServ = new attendanceService(conn);
+                attServ.verifyAttendance(attendanceId);
+                loadAttendance();
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Attendance verified successfully!"));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Could not connect to the database."));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error verifying attendance", e.getMessage()));
+        }
+    }
+
     public LocalTime getCheckInTime() {
         return checkInTime;
     }

@@ -14,7 +14,7 @@ public class user_accountDAO {
 
     // Add a new user account
     public void addUser(user_account user) throws SQLException {
-        String sql = "INSERT INTO user_account (username, password, usertype, staff_id) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO user_account (username, password, usertype, staff_id, is_hashed) VALUES (?, ?, ?, ?, 1)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPassword());
@@ -50,6 +50,7 @@ public class user_accountDAO {
                     rs.getInt("staff_id")   // include staff_id in constructor
                 );
                 user.setUsertype(rs.getInt("usertype")); // map usertype
+                user.setIsHashed(rs.getBoolean("is_hashed")); // map is_hashed
                 user_accountList.add(user);
             }
         }

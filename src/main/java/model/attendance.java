@@ -10,6 +10,8 @@ public class attendance {
     private LocalDateTime check_out;
     private LocalDate attendance_date;
 
+    private boolean verified;
+
     // Default Constructor
     public attendance() {}
 
@@ -20,6 +22,15 @@ public class attendance {
         this.check_in = check_in;
         this.check_out = check_out;
         this.attendance_date = attendance_date;
+    }
+
+    public attendance(int attendance_id, int staff_id, LocalDateTime check_in, LocalDateTime check_out, LocalDate attendance_date, boolean verified) {
+        this.attendance_id = attendance_id;
+        this.staff_id = staff_id;
+        this.check_in = check_in;
+        this.check_out = check_out;
+        this.attendance_date = attendance_date;
+        this.verified = verified;
     }
 
     // Getters and Setters
@@ -37,4 +48,7 @@ public class attendance {
 
     public LocalDate getAttendance_date() { return attendance_date; }
     public void setAttendance_date(LocalDate attendance_date) { this.attendance_date = attendance_date; }
+
+    public boolean isVerified() { return verified; }
+    public void setVerified(boolean verified) { this.verified = verified; }
 }

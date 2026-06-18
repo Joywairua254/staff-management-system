@@ -47,6 +47,27 @@
                                 <f:convertDateTime type="localDateTime" pattern="HH:mm:ss" />
                             </h:outputText>
                         </p:column>
+
+                        <p:column headerText="Status" style="text-align: center; width: 200px;">
+                            <h:panelGroup rendered="#{att.verified}">
+                                <span class="ui-tag-info" style="display: inline-block; padding: 4px 10px; border-radius: 4px; font-weight: 600; font-size: 13px;">
+                                    <i class="pi pi-check-circle" style="margin-right: 4px; vertical-align: middle;"></i>Verified
+                                </span>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{not att.verified}">
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <span class="ui-tag-danger" style="display: inline-block; padding: 4px 10px; border-radius: 4px; font-weight: 600; font-size: 13px;">
+                                        <i class="pi pi-exclamation-triangle" style="margin-right: 4px; vertical-align: middle;"></i>Pending
+                                    </span>
+                                    <p:commandButton value="Verify" 
+                                                     action="#{attendanceBean.verify(att.attendance_id)}" 
+                                                     update="attendanceTable" 
+                                                     styleClass="ui-button-success ui-button-xs" 
+                                                     icon="pi pi-check" 
+                                                     style="font-size: 11px; padding: 2px 6px;" />
+                                </div>
+                            </h:panelGroup>
+                        </p:column>
                     </p:dataTable>
                 </div>
             </h:panelGroup>

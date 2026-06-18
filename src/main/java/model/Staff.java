@@ -10,6 +10,7 @@ public class Staff implements Serializable {
     private String phone;
     private int deptId;
     private int roleId;
+    private String profilePic; // Base64 data URL
 
     public Staff() {}
 
@@ -21,6 +22,17 @@ public class Staff implements Serializable {
         this.phone = phone;
         this.deptId = deptId;
         this.roleId = roleId;
+    }
+
+    public Staff(int id, String firstName, String lastName, String email, String phone, int deptId, int roleId, String profilePic) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+        this.deptId = deptId;
+        this.roleId = roleId;
+        this.profilePic = profilePic;
     }
 
     // Getters and Setters
@@ -44,4 +56,7 @@ public class Staff implements Serializable {
 
     public int getRoleId() { return roleId; }
     public void setRoleId(int roleId) { this.roleId = roleId; }
+
+    public String getProfilePic() { return profilePic; }
+    public void setProfilePic(String profilePic) { this.profilePic = profilePic; }
 }

@@ -3,6 +3,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui">
 <h:head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Staff Management System - Login</title>
     <!-- Use Outfit font for modern aesthetics -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
@@ -20,12 +21,14 @@
         }
         
         .login-card {
-            width: 380px;
+            width: 100%;
+            max-width: 380px;
             margin: auto;
             border-radius: 12px !important;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.08) !important;
             border: 1px solid #e5e7eb !important;
             background: white !important;
+            box-sizing: border-box;
         }
 
         .ui-panel .ui-panel-titlebar {
@@ -112,6 +115,23 @@
 
         .messages-container {
             margin-top: 15px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            .form-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .form-label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .form-input-wrapper {
+                width: 100%;
+            }
         }
     </style>
 </h:head>

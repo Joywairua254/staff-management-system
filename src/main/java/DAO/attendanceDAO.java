@@ -53,7 +53,8 @@ public class attendanceDAO {
                     rs.getInt("staff_id"),
                     inTime,
                     outTime,
-                    d
+                    d,
+                    rs.getBoolean("verified")
                 );
                 attList.add(att);
             }
@@ -62,12 +63,21 @@ public class attendanceDAO {
     }
 
     public void updateAttendance(attendance att) throws SQLException {
-        String sql = "UPDATE attendance SET check_in = ?, check_out = ?, attendance_date = ? WHERE attendance_id = ?";
+        String sql = "UPDATE attendance SET check_in = ?, check_out = ?, attendance_date = ?, verified = ? WHERE attendance_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setTimestamp(1, att.getCheck_in() != null ? Timestamp.valueOf(att.getCheck_in()) : null);
             stmt.setTimestamp(2, att.getCheck_out() != null ? Timestamp.valueOf(att.getCheck_out()) : null);
             stmt.setDate(3, att.getAttendance_date() != null ? Date.valueOf(att.getAttendance_date()) : null);
-            stmt.setInt(4, att.getAttendance_id());
+            stmt.setBoolean(4, att.isVerified());
+            stmt.setInt(5, att.getAttendance_id());
+            stmt.executeUpdate();
+        }
+    }
+
+    public void verifyAttendance(int attendanceId) throws SQLException {
+        String sql = "UPDATE attendance SET verified = 1 WHERE attendance_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, attendanceId);
             stmt.executeUpdate();
         }
     }
@@ -91,7 +101,8 @@ public class attendanceDAO {
                         rs.getInt("staff_id"),
                         inTime,
                         outTime,
-                        d
+                        d,
+                        rs.getBoolean("verified")
                     );
                 }
             }
@@ -118,7 +129,8 @@ public class attendanceDAO {
                         rs.getInt("staff_id"),
                         inTime,
                         outTime,
-                        d
+                        d,
+                        rs.getBoolean("verified")
                     ));
                 }
             }

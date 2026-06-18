@@ -1,0 +1,194 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Leave Management</ui:define>
+
+    <ui:define name="content">
+        <!-- NORMAL STAFF VIEW -->
+        <h:panelGroup rendered="#{loginbean.usertype == 0}" layout="block">
+            <h2 style="margin-top: 0; font-weight: 600; color: #1e3a8a;">Leave Requests</h2>
+            
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
+                <!-- Leave Request Form -->
+                <div class="card" style="flex: 1; min-width: 320px;">
+                    <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <i class="pi pi-calendar-plus" style="font-size: 20px; color: #3b82f6;"></i> Request Leave
+                    </h3>
+                    <h:form id="leaveRequestForm">
+                        <div class="ui-fluid">
+                            <div style="margin-bottom: 15px;">
+                                <p:outputLabel for="leaveType" value="Leave Type" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                <p:selectOneMenu id="leaveType" value="#{leaveRequestBean.newRequest.leaveType}" required="true" requiredMessage="Leave type is required">
+                                    <f:selectItem itemLabel="Select Leave Type" itemValue="" noSelectionOption="true" />
+                                    <f:selectItem itemLabel="Annual Leave" itemValue="Annual Leave" />
+                                    <f:selectItem itemLabel="Sick Leave" itemValue="Sick Leave" />
+                                    <f:selectItem itemLabel="Casual Leave" itemValue="Casual Leave" />
+                                    <f:selectItem itemLabel="Maternity Leave" itemValue="Maternity Leave" />
+                                    <f:selectItem itemLabel="Paternity Leave" itemValue="Paternity Leave" />
+                                    <f:selectItem itemLabel="Study Leave" itemValue="Study Leave" />
+                                    <f:selectItem itemLabel="Compassionate Leave" itemValue="Compassionate Leave" />
+                                </p:selectOneMenu>
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <p:outputLabel for="startDate" value="Start Date" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                <p:datePicker id="startDate" value="#{leaveRequestBean.newRequest.startDate}" required="true" requiredMessage="Start Date is required" showIcon="true" />
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <p:outputLabel for="endDate" value="End Date" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                <p:datePicker id="endDate" value="#{leaveRequestBean.newRequest.endDate}" required="true" requiredMessage="End Date is required" showIcon="true" />
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <p:outputLabel for="reason" value="Reason / Comments" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                <p:inputTextarea id="reason" value="#{leaveRequestBean.newRequest.reason}" rows="4" autoResize="false" placeholder="Briefly describe the reason for your leave..." />
+                            </div>
+
+                            <div style="text-align: right;">
+                                <p:commandButton value="Submit Leave Request" 
+                                                 action="#{leaveRequestBean.submitRequest(loginbean.staffId)}" 
+                                                 update="@form :myLeaveHistoryForm" 
+                                                 icon="pi pi-send" 
+                                                 styleClass="ui-button-primary" />
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+
+                <!-- My Leave History -->
+                <div class="card" style="flex: 2; min-width: 450px;">
+                    <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <i class="pi pi-history" style="font-size: 20px; color: #3b82f6;"></i> Request History
+                    </h3>
+                    <h:form id="myLeaveHistoryForm">
+                        <p:dataTable value="#{leaveRequestBean.getUserRequests(loginbean.staffId)}" var="req" 
+                                     paginator="true" rows="5" paginatorPosition="bottom"
+                                     reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
+                                     emptyMessage="No leave requests submitted yet.">
+                            <p:column headerText="Leave Type" sortBy="#{req.leaveType}">
+                                <h:outputText value="#{req.leaveType}" style="font-weight: 600;" />
+                            </p:column>
+                            <p:column headerText="Start Date" sortBy="#{req.startDate}" style="text-align: center;">
+                                <h:outputText value="#{req.startDate}">
+                                    <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="End Date" sortBy="#{req.endDate}" style="text-align: center;">
+                                <h:outputText value="#{req.endDate}">
+                                    <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Reason">
+                                <h:outputText value="#{req.reason}" />
+                            </p:column>
+                            <p:column headerText="Status" style="text-align: center; width: 120px;" sortBy="#{req.status}">
+                                <h:panelGroup rendered="#{req.status == 'Pending'}">
+                                    <span class="ui-tag-danger" style="background-color: #fffbeb; color: #d97706; border-color: #fde68a;">
+                                        <i class="pi pi-clock" style="margin-right: 4px; vertical-align: middle;"></i>Pending
+                                    </span>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{req.status == 'Approved'}">
+                                    <span class="ui-tag-info" style="background-color: #f0fdf4; color: #16a34a; border-color: #bbf7d0;">
+                                        <i class="pi pi-check-circle" style="margin-right: 4px; vertical-align: middle;"></i>Approved
+                                    </span>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{req.status == 'Rejected'}">
+                                    <span class="ui-tag-danger" style="background-color: #fef2f2; color: #ef4444; border-color: #fecaca;">
+                                        <i class="pi pi-times-circle" style="margin-right: 4px; vertical-align: middle;"></i>Rejected
+                                    </span>
+                                </h:panelGroup>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <!-- ADMIN VIEW -->
+        <h:panelGroup rendered="#{loginbean.usertype == 1}" layout="block">
+            <div class="card">
+                <h2 style="margin-top: 0; font-weight: 600; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                    <i class="pi pi-users" style="font-size: 24px; color: #3b82f6;"></i> Manage Staff Leave Requests
+                </h2>
+                
+                <h:form id="adminLeavesForm" style="margin-top: 20px;">
+                    <p:dataTable value="#{leaveRequestBean.allRequests}" var="req" 
+                                 paginator="true" rows="10" paginatorPosition="bottom"
+                                 reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
+                                 emptyMessage="No leave requests found in database.">
+                        
+                        <p:column headerText="Request ID" sortBy="#{req.leaveId}" style="width: 100px; text-align: center;">
+                            <h:outputText value="#{req.leaveId}" />
+                        </p:column>
+
+                        <p:column headerText="Staff Member" sortBy="#{leaveRequestBean.getStaffName(req.staffId)}" filterBy="#{leaveRequestBean.getStaffName(req.staffId)}" filterMatchMode="contains">
+                            <h:outputText value="#{leaveRequestBean.getStaffName(req.staffId)}" style="font-weight: 600;" />
+                        </p:column>
+
+                        <p:column headerText="Leave Type" sortBy="#{req.leaveType}">
+                            <h:outputText value="#{req.leaveType}" />
+                        </p:column>
+
+                        <p:column headerText="Start Date" sortBy="#{req.startDate}" style="text-align: center; width: 120px;">
+                            <h:outputText value="#{req.startDate}">
+                                <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="End Date" sortBy="#{req.endDate}" style="text-align: center; width: 120px;">
+                            <h:outputText value="#{req.endDate}">
+                                <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Reason">
+                            <h:outputText value="#{req.reason}" />
+                        </p:column>
+
+                        <p:column headerText="Status" style="text-align: center; width: 120px;" sortBy="#{req.status}">
+                            <h:panelGroup rendered="#{req.status == 'Pending'}">
+                                <span class="ui-tag-danger" style="background-color: #fffbeb; color: #d97706; border-color: #fde68a; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
+                                    <i class="pi pi-clock" style="margin-right: 4px; vertical-align: middle;"></i>Pending
+                                </span>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{req.status == 'Approved'}">
+                                <span class="ui-tag-info" style="background-color: #f0fdf4; color: #16a34a; border-color: #bbf7d0; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
+                                    <i class="pi pi-check-circle" style="margin-right: 4px; vertical-align: middle;"></i>Approved
+                                </span>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{req.status == 'Rejected'}">
+                                <span class="ui-tag-danger" style="background-color: #fef2f2; color: #ef4444; border-color: #fecaca; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
+                                    <i class="pi pi-times-circle" style="margin-right: 4px; vertical-align: middle;"></i>Rejected
+                                </span>
+                            </h:panelGroup>
+                        </p:column>
+
+                        <p:column headerText="Actions" style="text-align: center; width: 180px;">
+                            <h:panelGroup rendered="#{req.status == 'Pending'}">
+                                <p:commandButton value="Approve" 
+                                                 action="#{leaveRequestBean.approveRequest(req.leaveId)}" 
+                                                 update="@form" 
+                                                 icon="pi pi-check" 
+                                                 styleClass="ui-button-success ui-button-sm" 
+                                                 style="margin-right: 5px;" />
+                                <p:commandButton value="Reject" 
+                                                 action="#{leaveRequestBean.rejectRequest(req.leaveId)}" 
+                                                 update="@form" 
+                                                 icon="pi pi-times" 
+                                                 styleClass="ui-button-danger ui-button-sm" />
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{req.status != 'Pending'}">
+                                <h:outputText value="Action Completed" style="color: #9ca3af; font-size: 13px; font-style: italic;" />
+                            </h:panelGroup>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

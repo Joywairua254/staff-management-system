@@ -13,7 +13,7 @@ public class StaffDAO {
     }
 
     public boolean insertStaff(Staff staff) throws SQLException {
-        String sql = "INSERT INTO staff (F_name, L_Name, email, phone, dept_id, role_id) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO staff (F_name, L_Name, email, phone, dept_id, role_id, profile_pic) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, staff.getFirstName());
             ps.setString(2, staff.getLastName());
@@ -21,6 +21,7 @@ public class StaffDAO {
             ps.setString(4, staff.getPhone());
             ps.setInt(5, staff.getDeptId());
             ps.setInt(6, staff.getRoleId());
+            ps.setString(7, staff.getProfilePic());
             boolean result = ps.executeUpdate() == 1;
             if (result) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -35,7 +36,7 @@ public class StaffDAO {
 
     public List<Staff> getAllStaff() throws SQLException {
         List<Staff> list = new ArrayList<>();
-        String sql = "SELECT staff_id, F_name, L_Name, email, phone, dept_id, role_id FROM staff";
+        String sql = "SELECT staff_id, F_name, L_Name, email, phone, dept_id, role_id, profile_pic FROM staff";
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -46,7 +47,8 @@ public class StaffDAO {
                     rs.getString("email"),
                     rs.getString("phone"),
                     rs.getInt("dept_id"),
-                    rs.getInt("role_id")
+                    rs.getInt("role_id"),
+                    rs.getString("profile_pic")
                 );
                 list.add(s);
             }
@@ -90,7 +92,7 @@ public class StaffDAO {
     }
 
     public boolean updateStaff(Staff staff) throws SQLException {
-        String sql = "UPDATE staff SET F_name = ?, L_Name = ?, email = ?, phone = ?, dept_id = ?, role_id = ? WHERE staff_id = ?";
+        String sql = "UPDATE staff SET F_name = ?, L_Name = ?, email = ?, phone = ?, dept_id = ?, role_id = ?, profile_pic = ? WHERE staff_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, staff.getFirstName());
             ps.setString(2, staff.getLastName());
@@ -98,13 +100,14 @@ public class StaffDAO {
             ps.setString(4, staff.getPhone());
             ps.setInt(5, staff.getDeptId());
             ps.setInt(6, staff.getRoleId());
-            ps.setInt(7, staff.getId());
+            ps.setString(7, staff.getProfilePic());
+            ps.setInt(8, staff.getId());
             return ps.executeUpdate() == 1;
         }
     }
 
     public Staff getStaffById(int id) throws SQLException {
-        String sql = "SELECT staff_id, F_name, L_Name, email, phone, dept_id, role_id FROM staff WHERE staff_id = ?";
+        String sql = "SELECT staff_id, F_name, L_Name, email, phone, dept_id, role_id, profile_pic FROM staff WHERE staff_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -116,7 +119,8 @@ public class StaffDAO {
                         rs.getString("email"),
                         rs.getString("phone"),
                         rs.getInt("dept_id"),
-                        rs.getInt("role_id")
+                        rs.getInt("role_id"),
+                        rs.getString("profile_pic")
                     );
                 }
             }

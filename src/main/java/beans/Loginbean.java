@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.util.List;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.servlet.http.Part;
 
 @Named("loginbean")
 @SessionScoped
@@ -26,6 +27,7 @@ public class Loginbean implements Serializable {
     private Staff currentStaff;
     private String departmentName;
     private String roleName;
+    private Part profileFile;
 
     private user_accountService userService;
 
@@ -112,6 +114,44 @@ public class Loginbean implements Serializable {
         }
     }
 
+    public void uploadProfilePic() {
+        try {
+            if (profileFile != null) {
+                try (java.io.InputStream input = profileFile.getInputStream()) {
+                    byte[] bytes = input.readAllBytes();
+                    if (bytes.length > 0) {
+                        String base64 = java.util.Base64.getEncoder().encodeToString(bytes);
+                        if (currentStaff != null) {
+                            currentStaff.setProfilePic(base64);
+                            Connection conn = DBConnection.getConnection();
+                            if (conn != null) {
+                                StaffService ss = new StaffService(conn);
+                                boolean success = ss.updateStaff(currentStaff);
+                                if (success) {
+                                    FacesContext.getCurrentInstance().addMessage(null,
+                                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Profile picture uploaded successfully!"));
+                                } else {
+                                    FacesContext.getCurrentInstance().addMessage(null,
+                                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to update profile picture in database."));
+                                }
+                            }
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning", "Selected file is empty."));
+                    }
+                }
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No file selected."));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Upload failed", e.getMessage()));
+        }
+    }
+
     // Getters and setters
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
@@ -128,4 +168,6 @@ public class Loginbean implements Serializable {
     public void setDepartmentName(String departmentName) { this.departmentName = departmentName; }
     public String getRoleName() { return roleName; }
     public void setRoleName(String roleName) { this.roleName = roleName; }
+    public Part getProfileFile() { return profileFile; }
+    public void setProfileFile(Part profileFile) { this.profileFile = profileFile; }
 }

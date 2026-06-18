@@ -39,4 +39,8 @@ public class attendanceService {
     public List<attendance> getAttendanceForStaff(int staffId) throws SQLException {
         return attendanceDAO.getAttendanceForStaff(staffId);
     }
+
+    public void verifyAttendance(int attendanceId) throws SQLException {
+        attendanceDAO.verifyAttendance(attendanceId);
+    }
 }

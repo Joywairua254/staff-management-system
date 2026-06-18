@@ -2,8 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 <h:head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><ui:insert name="title">Staff Management System</ui:insert></title>
     <style>
         body {
@@ -55,6 +57,9 @@
             padding: 30px;
             background-color: #f9fafb;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .card {
             background: white;
@@ -151,6 +156,39 @@
             font-size: 12px;
             border: 1px solid #bbf7d0;
         }
+
+        /* Responsive Media Queries */
+        @media (max-width: 768px) {
+            .header-panel {
+                flex-direction: column;
+                padding: 15px;
+                gap: 15px;
+                text-align: center;
+            }
+            .header-panel div {
+                justify-content: center !important;
+            }
+            .user-welcome {
+                width: 100%;
+                justify-content: center;
+                box-sizing: border-box;
+            }
+            .dashboard-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                padding: 10px;
+                box-sizing: border-box;
+            }
+            .main-content {
+                padding: 15px;
+            }
+            .card {
+                padding: 15px;
+            }
+        }
     </style>
 </h:head>
 <h:body>
@@ -162,8 +200,13 @@
                 <img src="#{request.contextPath}/resources/images/new-mspace-logo.jpeg" style="height: 42px; border-radius: 4px; background-color: white; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.15);" alt="Mspace Logo" />
             </div>
             <div class="user-welcome">
-                <i class="pi pi-user" style="font-size: 14px;"></i>
-                <h:outputText value="Welcome, #{loginbean.username}!" style="font-weight: 600;" />
+                <h:panelGroup rendered="#{not empty loginbean.currentStaff.profilePic}">
+                    <img src="data:image/jpeg;base64,#{loginbean.currentStaff.profilePic}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1.5px solid white; vertical-align: middle; margin-right: 3px;" />
+                </h:panelGroup>
+                <h:panelGroup rendered="#{empty loginbean.currentStaff.profilePic}">
+                    <i class="pi pi-user" style="font-size: 14px;"></i>
+                </h:panelGroup>
+                <h:outputText value="Welcome, #{loginbean.username}!" style="font-weight: 600; vertical-align: middle;" />
                 <p:commandButton value="Logout" 
                                  action="#{loginbean.logout}" 
                                  styleClass="logout-btn ui-button-flat ui-button-plain"
@@ -177,6 +220,7 @@
         <div class="sidebar">
             <h:form id="sidebarForm">
                 <p:panelMenu style="width: 100%;">
+                    <!-- Admin Navigation -->
                     <p:submenu label="Staff" styleClass="menu-staff" rendered="#{loginbean.usertype == 1}">
                         <p:menuitem value="View Staff" outcome="/stafflist.xhtml" icon="pi pi-align-justify" />
                     </p:submenu>
@@ -192,21 +236,102 @@
                     <p:submenu label="Attendance" styleClass="menu-attendance" rendered="#{loginbean.usertype == 1}">
                         <p:menuitem value="View Attendance" outcome="/attendancelist.xhtml" icon="pi pi-eye" />
                     </p:submenu>
+
+                    <p:submenu label="Leave Requests" styleClass="menu-roles" rendered="#{loginbean.usertype == 1}">
+                        <p:menuitem value="Manage Leaves" outcome="/leaverequest.xhtml" icon="pi pi-calendar" />
+                    </p:submenu>
+
+                    <p:submenu label="Asset Requests" styleClass="menu-departments" rendered="#{loginbean.usertype == 1}">
+                        <p:menuitem value="Manage Assets" outcome="/assetrequest.xhtml" icon="pi pi-briefcase" />
+                    </p:submenu>
+
+                    <p:submenu label="Task Assignment" styleClass="menu-attendance" rendered="#{loginbean.usertype == 1}">
+                        <p:menuitem value="Manage Tasks" outcome="/taskmanagement.xhtml" icon="pi pi-check-square" />
+                    </p:submenu>
+
+                    <!-- Normal Staff Navigation -->
+                    <p:submenu label="Dashboard" styleClass="menu-staff" rendered="#{loginbean.usertype == 0}">
+                        <p:menuitem value="My Dashboard" outcome="/dashboard.xhtml" icon="pi pi-home" />
+                    </p:submenu>
+
+                    <p:submenu label="Leave Request" styleClass="menu-roles" rendered="#{loginbean.usertype == 0}">
+                        <p:menuitem value="Request Leave" outcome="/leaverequest.xhtml" icon="pi pi-calendar-plus" />
+                    </p:submenu>
+
+                    <p:submenu label="Asset Request" styleClass="menu-departments" rendered="#{loginbean.usertype == 0}">
+                        <p:menuitem value="Request Asset" outcome="/assetrequest.xhtml" icon="pi pi-briefcase" />
+                    </p:submenu>
                 </p:panelMenu>
             </h:form>
+            
+            <!-- Active Tasks Panel in Sidebar for Normal Staff -->
+            <h:panelGroup rendered="#{loginbean.usertype == 0}" layout="block" style="margin-top: 25px; padding: 12px; border-top: 1px solid #e5e7eb;">
+                <h3 style="font-size: 13px; text-transform: uppercase; color: #1e3a8a; font-weight: 700; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; border-bottom: 2px solid #eff6ff; padding-bottom: 5px;">
+                    <i class="pi pi-check-square" style="color: #3b82f6; font-size: 14px;"></i> Active Tasks
+                </h3>
+                <div style="max-height: 250px; overflow-y: auto;">
+                    <ui:repeat value="#{taskBean.getActiveUserTasks(loginbean.staffId)}" var="task">
+                        <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; margin-bottom: 8px; font-size: 12px;">
+                            <div style="font-weight: 600; color: #374151; word-wrap: break-word;">#{task.description}</div>
+                            <div style="color: #ef4444; font-size: 11px; margin-top: 6px; display: flex; align-items: center; gap: 4px; font-weight: 500;">
+                                <i class="pi pi-clock" style="font-size: 10px;"></i>
+                                Due: 
+                                <h:outputText value="#{task.deadline}">
+                                    <f:convertDateTime type="localDateTime" pattern="yyyy-MM-dd HH:mm" />
+                                </h:outputText>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </div>
+                <h:panelGroup rendered="#{empty taskBean.getActiveUserTasks(loginbean.staffId)}">
+                    <p style="color: #9ca3af; font-size: 11px; font-style: italic; margin: 5px 0 0 0; text-align: center;">No active tasks.</p>
+                </h:panelGroup>
+            </h:panelGroup>
         </div>
 
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Alert Messages -->
-            <p:messages id="globalMsgs" showDetail="true" closable="true" style="margin-bottom: 20px;">
-                <p:autoUpdate />
-            </p:messages>
+            <div>
+                <!-- Alert Messages -->
+                <p:messages id="globalMsgs" showDetail="true" closable="true" style="margin-bottom: 20px;">
+                    <p:autoUpdate />
+                </p:messages>
 
-            <ui:insert name="content">
-                <!-- Default Content -->
-                <h2>Content Area</h2>
-            </ui:insert>
+                <ui:insert name="content">
+                    <!-- Default Content -->
+                    <h2>Content Area</h2>
+                </ui:insert>
+            </div>
+            
+            <!-- JavaScript Real-time Clock Footer -->
+            <div style="margin-top: auto; padding-top: 30px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; color: #6b7280; font-size: 13px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    © <span id="copyright-year">2026</span> Staff Management System. All rights reserved.
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; font-weight: 500; background-color: #f1f5f9; padding: 4px 12px; border-radius: 20px; border: 1px solid #e2e8f0;">
+                    <i class="pi pi-clock" style="color: #3b82f6; font-size: 12px;"></i>
+                    <span id="realtime-clock" style="font-family: monospace;"></span>
+                </div>
+            </div>
+            
+            <script>
+                //<![CDATA[
+                function updateClock() {
+                    var now = new Date();
+                    var timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                    var clockEl = document.getElementById('realtime-clock');
+                    if (clockEl) {
+                        clockEl.innerHTML = timeStr;
+                    }
+                    var yearEl = document.getElementById('copyright-year');
+                    if (yearEl) {
+                        yearEl.innerHTML = now.getFullYear();
+                    }
+                }
+                setInterval(updateClock, 1000);
+                updateClock();
+                //]]>
+            </script>
         </div>
     </div>
 </h:body>
