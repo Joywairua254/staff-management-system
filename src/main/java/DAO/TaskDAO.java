@@ -131,7 +131,7 @@ public class TaskDAO {
         Timestamp crTs = rs.getTimestamp("created_at");
         LocalDateTime created = crTs != null ? crTs.toLocalDateTime() : null;
 
-        return new Task(
+        Task task = new Task(
             rs.getInt("task_id"),
             rs.getString("description"),
             dl,
@@ -140,6 +140,9 @@ public class TaskDAO {
             rs.getString("document"),
             rs.getString("doc_name")
         );
+        task.setAdminComment(rs.getString("admin_comment"));
+        task.setStaffComment(rs.getString("staff_comment"));
+        return task;
     }
 
     public void updateTaskSubmission(int taskId, String document, String docName) throws SQLException {
@@ -148,6 +151,24 @@ public class TaskDAO {
             stmt.setString(1, document);
             stmt.setString(2, docName);
             stmt.setInt(3, taskId);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void updateAdminComment(int taskId, String comment) throws SQLException {
+        String sql = "UPDATE task SET admin_comment = ? WHERE task_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, comment);
+            stmt.setInt(2, taskId);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void updateStaffComment(int taskId, String comment) throws SQLException {
+        String sql = "UPDATE task SET staff_comment = ? WHERE task_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, comment);
+            stmt.setInt(2, taskId);
             stmt.executeUpdate();
         }
     }

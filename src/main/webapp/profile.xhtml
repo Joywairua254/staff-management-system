@@ -1,0 +1,77 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Edit Profile</ui:define>
+
+    <ui:define name="content">
+        <h2 style="margin-top: 0; font-weight: 600; color: #1e3a8a;">My Personal Profile</h2>
+
+        <div style="display: flex; justify-content: center; margin-top: 20px;">
+            <div class="card" style="width: 100%; max-width: 600px; margin-bottom: 0;">
+                <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <i class="pi pi-user-edit" style="font-size: 20px; color: #3b82f6;"></i> Update Profile Details
+                </h3>
+                <h:form id="profileForm" style="margin-top: 15px;" enctype="multipart/form-data">
+                    <!-- Profile Image Section -->
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 25px; background-color: var(--main-bg); padding: 20px; border-radius: 12px; border: 1px dashed var(--border-color);">
+                        <h:panelGroup rendered="#{not empty loginbean.currentStaff.profilePic}">
+                            <img src="data:image/jpeg;base64,#{loginbean.currentStaff.profilePic}" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 15px;" alt="Profile Picture" />
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{empty loginbean.currentStaff.profilePic}">
+                            <div style="width: 130px; height: 130px; border-radius: 50%; background-color: #eff6ff; display: flex; align-items: center; justify-content: center; border: 4px dashed #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px;">
+                                <i class="pi pi-user" style="font-size: 52px; color: #3b82f6;"></i>
+                            </div>
+                        </h:panelGroup>
+                        
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 250px;">
+                            <h:inputFile id="profileUpload" value="#{loginbean.profileFile}" style="font-size: 13px; color: #64748b; background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 6px; width: 100%; box-sizing: border-box;" />
+                            <p:commandButton value="Upload Photo" action="#{loginbean.uploadProfilePic}" ajax="false" icon="pi pi-upload" styleClass="ui-button-outlined" style="width: 100%; border-radius: 6px;" />
+                        </div>
+                    </div>
+
+                    <div class="ui-fluid">
+                        <div style="margin-bottom: 15px;">
+                            <p:outputLabel value="Full Name (Read-Only)" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                            <p:inputText value="#{loginbean.currentStaff.firstName} #{loginbean.currentStaff.lastName}" disabled="true" />
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <p:outputLabel value="Department (Read-Only)" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                            <p:inputText value="#{loginbean.departmentName}" disabled="true" />
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <p:outputLabel value="Role (Read-Only)" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                            <p:inputText value="#{loginbean.roleName}" disabled="true" />
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <p:outputLabel for="email" value="Email Address" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                            <p:inputText id="email" value="#{loginbean.currentStaff.email}" required="true" requiredMessage="Email is required" />
+                            <p:message for="email" />
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <p:outputLabel for="phone" value="Phone Number" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                            <p:inputText id="phone" value="#{loginbean.currentStaff.phone}" required="true" requiredMessage="Phone is required" />
+                            <p:message for="phone" />
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; text-align: right;">
+                        <p:commandButton value="Save Profile Details" 
+                                         action="#{loginbean.saveProfile}" 
+                                         update="@form"
+                                         icon="pi pi-save" 
+                                         styleClass="ui-button-success" 
+                                         style="width: 200px;" />
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

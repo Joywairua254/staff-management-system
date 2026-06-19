@@ -111,6 +111,20 @@
                             </h:panelGroup>
                         </p:column>
 
+                        <p:column headerText="Comments" style="width: 20%;">
+                            <div style="font-size: 11px; display: flex; flex-direction: column; gap: 4px;">
+                                <h:panelGroup rendered="#{not empty task.staffComment}">
+                                    <span style="font-weight: 600; color: #10b981;">Staff:</span> #{task.staffComment}
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{not empty task.adminComment}">
+                                    <span style="font-weight: 600; color: #3b82f6;">Admin:</span> #{task.adminComment}
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{empty task.staffComment and empty task.adminComment}">
+                                    <span style="color: #9ca3af; font-style: italic;">No comments</span>
+                                </h:panelGroup>
+                            </div>
+                        </p:column>
+
                         <p:column headerText="Status" style="width: 10%; text-align: center;">
                             <h:panelGroup rendered="#{task.completed}">
                                 <span class="ui-tag-info"><i class="pi pi-check" style="font-size: 9px; margin-right: 2px;"></i>Completed</span>
@@ -123,13 +137,19 @@
                             </h:panelGroup>
                         </p:column>
 
-                        <p:column headerText="Actions" style="width: 10%; text-align: center;">
+                        <p:column headerText="Actions" style="width: 15%; text-align: center;">
                             <div style="display: flex; justify-content: center; gap: 5px;">
                                 <p:commandButton icon="#{task.completed ? 'pi pi-undo' : 'pi pi-check'}" 
                                                  title="#{task.completed ? 'Mark Pending' : 'Mark Completed'}"
                                                  action="#{taskBean.toggleTaskCompletion(task.taskId, task.completed)}" 
                                                  update="@form" 
                                                  styleClass="#{task.completed ? 'ui-button-warning ui-button-flat' : 'ui-button-success ui-button-flat'}" />
+                                <p:commandButton icon="pi pi-comment" 
+                                                 title="Manage Comments"
+                                                 action="#{taskBean.setSelectedTask(task)}" 
+                                                 update=":commentDialogForm"
+                                                 oncomplete="PF('commentDialog').show();" 
+                                                 styleClass="ui-button-secondary ui-button-flat" />
                                 <p:commandButton icon="pi pi-trash" 
                                                  title="Delete Task"
                                                  action="#{taskBean.deleteTask(task.taskId)}" 
@@ -142,5 +162,50 @@
                 </h:form>
             </div>
         </div>
+
+        <!-- Feedback Dialog -->
+        <p:dialog header="Task Comments &amp; Review" widgetVar="commentDialog" modal="true" responsive="true" width="450" showEffect="fade" hideEffect="fade" styleClass="ui-dialog">
+            <h:form id="commentDialogForm">
+                <h:panelGroup rendered="#{not empty taskBean.selectedTask}">
+                    <div class="ui-fluid">
+                        <div style="margin-bottom: 15px;">
+                            <strong>Task Description:</strong>
+                            <p style="margin: 5px 0 0 0; color: var(--card-text-mute); font-size: 13px;">#{taskBean.selectedTask.description}</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>Staff Submission:</strong>
+                            <p style="margin: 5px 0 0 0; font-size: 13px;">
+                                <h:panelGroup rendered="#{not empty taskBean.selectedTask.document}">
+                                    <a href="data:application/octet-stream;base64,#{taskBean.selectedTask.document}" download="#{taskBean.selectedTask.docName}" style="color: #3b82f6; text-decoration: underline; font-weight: 600;">
+                                        <i class="pi pi-download"></i> #{taskBean.selectedTask.docName}
+                                    </a>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{empty taskBean.selectedTask.document}">
+                                    <span style="color: #9ca3af; font-style: italic;">No file submitted yet</span>
+                                </h:panelGroup>
+                            </p>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <strong>Staff Comment:</strong>
+                            <p style="margin: 5px 0 0 0; font-size: 13px; color: var(--text-color); background-color: var(--main-bg); padding: 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                                <h:outputText value="#{not empty taskBean.selectedTask.staffComment ? taskBean.selectedTask.staffComment : 'No comment from staff yet.'}" style="white-space: pre-wrap;" />
+                            </p>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <p:outputLabel for="adminCommentInput" value="Admin Feedback / Comment" style="font-weight: 600; display: block; margin-bottom: 5px;" />
+                            <p:inputTextarea id="adminCommentInput" value="#{taskBean.selectedTask.adminComment}" rows="4" autoResize="false" placeholder="Write feedback for the staff..." />
+                        </div>
+
+                        <div style="text-align: right; display: flex; justify-content: flex-end; gap: 10px;">
+                            <p:commandButton value="Cancel" type="button" onclick="PF('commentDialog').hide();" styleClass="ui-button-outlined ui-button-secondary" style="width: 100px;" />
+                            <p:commandButton value="Save Feedback" action="#{taskBean.saveAdminComment}" update=":tasksListForm" oncomplete="PF('commentDialog').hide();" styleClass="ui-button-success" style="width: 150px;" />
+                        </div>
+                    </div>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
     </ui:define>
 </ui:composition>

@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Manage Announcements</ui:define>
+
+    <ui:define name="content">
+        <h2 style="margin-top: 0; font-weight: 600; color: #1e3a8a;">Company Announcements Management</h2>
+
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
+            <!-- Post Announcement Form -->
+            <div class="card" style="flex: 1; min-width: 300px;">
+                <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <i class="pi pi-megaphone" style="font-size: 20px; color: #3b82f6;"></i> Post New Announcement
+                </h3>
+                <h:form id="postAnnouncementForm">
+                    <div class="ui-fluid">
+                        <div style="margin-bottom: 15px;">
+                            <p:outputLabel for="annTitle" value="Announcement Title" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                            <p:inputText id="annTitle" value="#{announcementBean.title}" required="true" requiredMessage="Title is required" placeholder="Enter title..." />
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <p:outputLabel for="annContent" value="Announcement Content" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                            <p:inputTextarea id="annContent" value="#{announcementBean.content}" required="true" requiredMessage="Content is required" rows="4" placeholder="Enter message..." autoResize="false" />
+                        </div>
+                        <div style="text-align: right;">
+                            <p:commandButton value="Publish Announcement" 
+                                             action="#{announcementBean.postAnnouncement(loginbean.username)}" 
+                                             update="@form :manageAnnouncementsForm" 
+                                             icon="pi pi-send" 
+                                             styleClass="ui-button-primary" />
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+
+            <!-- Manage Announcements List -->
+            <div class="card" style="flex: 2; min-width: 350px;">
+                <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <i class="pi pi-list" style="font-size: 20px; color: #3b82f6;"></i> Manage Announcements
+                </h3>
+                <h:form id="manageAnnouncementsForm">
+                    <p:dataTable value="#{announcementBean.announcementsList}" var="ann" 
+                                 paginator="true" rows="5" paginatorPosition="bottom"
+                                 reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
+                                 emptyMessage="No announcements posted yet.">
+                        <p:column headerText="Date" sortBy="#{ann.createdAt}" style="width: 150px;">
+                            <h:outputText value="#{ann.createdAt}">
+                                <f:convertDateTime type="localDateTime" pattern="yyyy-MM-dd HH:mm" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Title" sortBy="#{ann.title}">
+                            <h:outputText value="#{ann.title}" style="font-weight: 600;" />
+                        </p:column>
+                        <p:column headerText="Posted By" style="width: 100px;">
+                            <h:outputText value="#{ann.postedBy}" />
+                        </p:column>
+                        <p:column headerText="Actions" style="width: 80px; text-align: center;">
+                            <p:commandButton icon="pi pi-trash" 
+                                             action="#{announcementBean.deleteAnnouncement(ann.announcementId)}" 
+                                             update="@form" 
+                                             styleClass="ui-button-danger ui-button-flat" 
+                                             onclick="return confirm('Delete this announcement?');" />
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

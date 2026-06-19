@@ -11,6 +11,8 @@ public class Task implements Serializable {
     private LocalDateTime createdAt;
     private String document;
     private String docName;
+    private String adminComment;
+    private String staffComment;
 
     public Task() {}
 
@@ -30,6 +32,18 @@ public class Task implements Serializable {
         this.createdAt = createdAt;
         this.document = document;
         this.docName = docName;
+    }
+
+    public Task(int taskId, String description, LocalDateTime deadline, boolean completed, LocalDateTime createdAt, String document, String docName, String adminComment, String staffComment) {
+        this.taskId = taskId;
+        this.description = description;
+        this.deadline = deadline;
+        this.completed = completed;
+        this.createdAt = createdAt;
+        this.document = document;
+        this.docName = docName;
+        this.adminComment = adminComment;
+        this.staffComment = staffComment;
     }
 
     // Getters and Setters
@@ -53,4 +67,10 @@ public class Task implements Serializable {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getAdminComment() { return adminComment; }
+    public void setAdminComment(String adminComment) { this.adminComment = adminComment; }
+
+    public String getStaffComment() { return staffComment; }
+    public void setStaffComment(String staffComment) { this.staffComment = staffComment; }
 }

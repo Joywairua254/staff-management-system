@@ -31,6 +31,7 @@ public class TaskBean implements Serializable {
     private int selectedStaffId;
     private List<Integer> selectedStaffIds;
     private Part taskFile;
+    private Task selectedTask;
 
     private TaskService taskService;
     private StaffService staffService;
@@ -296,6 +297,52 @@ public class TaskBean implements Serializable {
             e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_ERROR, "Upload failed", e.getMessage()));
+        }
+    }
+
+    public Task getSelectedTask() {
+        return selectedTask;
+    }
+
+    public void setSelectedTask(Task selectedTask) {
+        this.selectedTask = selectedTask;
+    }
+
+    public void saveAdminComment() {
+        if (selectedTask != null) {
+            try {
+                Connection conn = DBConnection.getConnection();
+                if (conn != null) {
+                    TaskService ts = new TaskService(conn);
+                    ts.updateAdminComment(selectedTask.getTaskId(), selectedTask.getAdminComment());
+                    FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Admin comment saved successfully."));
+                    loadAllTasks();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error saving comment", e.getMessage()));
+            }
+        }
+    }
+
+    public void saveStaffComment() {
+        if (selectedTask != null) {
+            try {
+                Connection conn = DBConnection.getConnection();
+                if (conn != null) {
+                    TaskService ts = new TaskService(conn);
+                    ts.updateStaffComment(selectedTask.getTaskId(), selectedTask.getStaffComment());
+                    FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Your comment saved successfully."));
+                    loadAllTasks();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error saving comment", e.getMessage()));
+            }
         }
     }
 }

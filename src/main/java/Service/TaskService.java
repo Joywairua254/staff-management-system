@@ -49,4 +49,12 @@ public class TaskService {
     public void submitTaskDocument(int taskId, String document, String docName) throws SQLException {
         taskDAO.updateTaskSubmission(taskId, document, docName);
     }
+
+    public void updateAdminComment(int taskId, String comment) throws SQLException {
+        taskDAO.updateAdminComment(taskId, comment);
+    }
+
+    public void updateStaffComment(int taskId, String comment) throws SQLException {
+        taskDAO.updateStaffComment(taskId, comment);
+    }
 }
