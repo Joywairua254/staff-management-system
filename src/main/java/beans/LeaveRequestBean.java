@@ -134,6 +134,29 @@ public class LeaveRequestBean implements Serializable {
         }
     }
 
+    public void cancelRequest(int leaveId, int staffId) {
+        try {
+            Connection conn = DBConnection.getConnection();
+            if (conn != null) {
+                leaveService = new LeaveRequestService(conn);
+                boolean success = leaveService.cancelLeaveRequest(leaveId);
+                if (success) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Leave request cancelled successfully."));
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Only pending leave requests can be cancelled."));
+                }
+                loadUserRequests(staffId);
+                loadAllRequests();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error cancelling request", e.getMessage()));
+        }
+    }
+
     public String getStaffName(int staffId) {
         if (staffList != null) {
             for (Staff s : staffList) {

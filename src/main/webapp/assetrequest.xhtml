@@ -19,10 +19,14 @@
                         <i class="pi pi-plus-circle" style="font-size: 20px; color: #3b82f6;"></i> Request Office Asset
                     </h3>
                     <h:form id="assetRequestForm">
+                        <p:messages id="assetRequestMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
                         <div class="ui-fluid">
                             <div style="margin-bottom: 15px;">
                                 <p:outputLabel for="assetName" value="Asset Name" style="font-weight: 600; margin-bottom: 5px; display: block;" />
-                                <p:inputText id="assetName" value="#{assetRequestBean.newRequest.assetName}" required="true" requiredMessage="Asset Name is required" placeholder="e.g. Laptop charger, Ergonomic chair, Monitor..." />
+                                <p:selectOneMenu id="assetName" value="#{assetRequestBean.newRequest.assetName}" required="true" requiredMessage="Asset Name is required">
+                                    <f:selectItem itemLabel="Select Asset" itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{assetRequestBean.availableAssets}" var="asset" itemLabel="#{asset.name} (#{asset.quantity} available)" itemValue="#{asset.name}" />
+                                </p:selectOneMenu>
                             </div>
 
                             <div style="margin-bottom: 15px;">
@@ -52,6 +56,7 @@
                         <i class="pi pi-history" style="font-size: 20px; color: #3b82f6;"></i> Request History
                     </h3>
                     <h:form id="myAssetHistoryForm">
+                        <p:messages id="myAssetHistoryMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
                         <p:dataTable value="#{assetRequestBean.getUserRequests(loginbean.staffId)}" var="req" 
                                      paginator="true" rows="5" paginatorPosition="bottom"
                                      reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
@@ -86,6 +91,23 @@
                                         <i class="pi pi-times-circle" style="margin-right: 4px; vertical-align: middle;"></i>Rejected
                                     </span>
                                 </h:panelGroup>
+                                <h:panelGroup rendered="#{req.status == 'Cancelled'}">
+                                    <span class="ui-tag-danger" style="background-color: #f3f4f6; color: #4b5563; border-color: #e5e7eb;">
+                                        <i class="pi pi-ban" style="margin-right: 4px; vertical-align: middle;"></i>Cancelled
+                                    </span>
+                                </h:panelGroup>
+                            </p:column>
+                            <p:column headerText="Actions" style="text-align: center; width: 120px;">
+                                <h:panelGroup rendered="#{req.status == 'Pending'}">
+                                    <p:commandButton value="Cancel" 
+                                                     action="#{assetRequestBean.cancelRequest(req.requestId, loginbean.staffId)}" 
+                                                     update="@form" 
+                                                     icon="pi pi-ban" 
+                                                     styleClass="ui-button-secondary ui-button-sm" />
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{req.status != 'Pending'}">
+                                    <h:outputText value="N/A" style="color: #9ca3af; font-style: italic;" />
+                                </h:panelGroup>
                             </p:column>
                         </p:dataTable>
                     </h:form>
@@ -95,82 +117,197 @@
 
         <!-- ADMIN VIEW -->
         <h:panelGroup rendered="#{loginbean.usertype == 1}" layout="block">
-            <div class="card">
-                <h2 style="margin-top: 0; font-weight: 600; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                    <i class="pi pi-briefcase" style="font-size: 24px; color: #3b82f6;"></i> Manage Staff Asset Requests
-                </h2>
-                
-                <h:form id="adminAssetsForm" style="margin-top: 20px;">
-                    <p:dataTable value="#{assetRequestBean.allRequests}" var="req" 
-                                 paginator="true" rows="10" paginatorPosition="bottom"
-                                 reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
-                                 emptyMessage="No asset requests found in database.">
+            <h2 style="margin-top: 0; font-weight: 600; color: #1e3a8a; margin-bottom: 20px;">Asset Administration</h2>
+            
+            <p:tabView id="adminAssetTabView">
+                <p:tab title="Staff Asset Requests">
+                    <div class="card" style="border: none; padding: 0; box-shadow: none; margin-bottom: 0; background: transparent;">
+                        <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                            <i class="pi pi-list" style="font-size: 20px; color: #3b82f6;"></i> Manage Staff Asset Requests
+                        </h3>
                         
-                        <p:column headerText="Request ID" sortBy="#{req.requestId}" style="width: 100px; text-align: center;">
-                            <h:outputText value="#{req.requestId}" />
-                        </p:column>
+                        <h:form id="adminAssetsForm" style="margin-top: 20px;">
+                            <p:messages id="adminAssetsMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
+                            <p:dataTable value="#{assetRequestBean.allRequests}" var="req" 
+                                         paginator="true" rows="10" paginatorPosition="bottom"
+                                         reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
+                                         emptyMessage="No asset requests found in database.">
+                                
+                                <p:column headerText="Request ID" sortBy="#{req.requestId}" style="width: 100px; text-align: center;">
+                                    <h:outputText value="#{req.requestId}" />
+                                </p:column>
 
-                        <p:column headerText="Staff Member" sortBy="#{assetRequestBean.getStaffName(req.staffId)}" filterBy="#{assetRequestBean.getStaffName(req.staffId)}" filterMatchMode="contains">
-                            <h:outputText value="#{assetRequestBean.getStaffName(req.staffId)}" style="font-weight: 600;" />
-                        </p:column>
+                                <p:column headerText="Staff Member" sortBy="#{assetRequestBean.getStaffName(req.staffId)}" filterBy="#{assetRequestBean.getStaffName(req.staffId)}" filterMatchMode="contains">
+                                    <h:outputText value="#{assetRequestBean.getStaffName(req.staffId)}" style="font-weight: 600;" />
+                                </p:column>
 
-                        <p:column headerText="Asset Name" sortBy="#{req.assetName}">
-                            <h:outputText value="#{req.assetName}" />
-                        </p:column>
+                                <p:column headerText="Asset Name" sortBy="#{req.assetName}">
+                                    <h:outputText value="#{req.assetName}" style="font-weight: 600;" /><br/>
+                                    <small style="color: #6b7280; font-weight: 500;">
+                                        Stock Available: #{assetRequestBean.getAssetAvailableQuantity(req.assetName)}
+                                    </small>
+                                </p:column>
 
-                        <p:column headerText="Qty" sortBy="#{req.quantity}" style="text-align: center; width: 70px;">
-                            <h:outputText value="#{req.quantity}" />
-                        </p:column>
+                                <p:column headerText="Qty" sortBy="#{req.quantity}" style="text-align: center; width: 70px;">
+                                    <h:outputText value="#{req.quantity}" />
+                                </p:column>
 
-                        <p:column headerText="Reason">
-                            <h:outputText value="#{req.reason}" />
-                        </p:column>
+                                <p:column headerText="Reason">
+                                    <h:outputText value="#{req.reason}" />
+                                </p:column>
 
-                        <p:column headerText="Requested At" sortBy="#{req.createdAt}" style="text-align: center; width: 150px;">
-                            <h:outputText value="#{req.createdAt}">
-                                <f:convertDateTime type="localDateTime" pattern="yyyy-MM-dd HH:mm" />
-                            </h:outputText>
-                        </p:column>
+                                <p:column headerText="Requested At" sortBy="#{req.createdAt}" style="text-align: center; width: 150px;">
+                                    <h:outputText value="#{req.createdAt}">
+                                        <f:convertDateTime type="localDateTime" pattern="yyyy-MM-dd HH:mm" />
+                                    </h:outputText>
+                                </p:column>
 
-                        <p:column headerText="Status" style="text-align: center; width: 120px;" sortBy="#{req.status}">
-                            <h:panelGroup rendered="#{req.status == 'Pending'}">
-                                <span class="ui-tag-danger" style="background-color: #fffbeb; color: #d97706; border-color: #fde68a; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
-                                    <i class="pi pi-clock" style="margin-right: 4px; vertical-align: middle;"></i>Pending
-                                </span>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{req.status == 'Approved'}">
-                                <span class="ui-tag-info" style="background-color: #f0fdf4; color: #16a34a; border-color: #bbf7d0; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
-                                    <i class="pi pi-check-circle" style="margin-right: 4px; vertical-align: middle;"></i>Approved
-                                </span>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{req.status == 'Rejected'}">
-                                <span class="ui-tag-danger" style="background-color: #fef2f2; color: #ef4444; border-color: #fecaca; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
-                                    <i class="pi pi-times-circle" style="margin-right: 4px; vertical-align: middle;"></i>Rejected
-                                </span>
-                            </h:panelGroup>
-                        </p:column>
+                                <p:column headerText="Status" style="text-align: center; width: 120px;" sortBy="#{req.status}">
+                                    <h:panelGroup rendered="#{req.status == 'Pending'}">
+                                        <span class="ui-tag-danger" style="background-color: #fffbeb; color: #d97706; border-color: #fde68a; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
+                                            <i class="pi pi-clock" style="margin-right: 4px; vertical-align: middle;"></i>Pending
+                                        </span>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{req.status == 'Approved'}">
+                                        <span class="ui-tag-info" style="background-color: #f0fdf4; color: #16a34a; border-color: #bbf7d0; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
+                                            <i class="pi pi-check-circle" style="margin-right: 4px; vertical-align: middle;"></i>Approved
+                                        </span>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{req.status == 'Rejected'}">
+                                        <span class="ui-tag-danger" style="background-color: #fef2f2; color: #ef4444; border-color: #fecaca; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
+                                            <i class="pi pi-times-circle" style="margin-right: 4px; vertical-align: middle;"></i>Rejected
+                                        </span>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{req.status == 'Cancelled'}">
+                                        <span class="ui-tag-secondary" style="background-color: #f3f4f6; color: #4b5563; border-color: #e5e7eb; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
+                                            <i class="pi pi-ban" style="margin-right: 4px; vertical-align: middle;"></i>Cancelled
+                                        </span>
+                                    </h:panelGroup>
+                                </p:column>
 
-                        <p:column headerText="Actions" style="text-align: center; width: 180px;">
-                            <h:panelGroup rendered="#{req.status == 'Pending'}">
-                                <p:commandButton value="Approve" 
-                                                 action="#{assetRequestBean.approveRequest(req.requestId)}" 
-                                                 update="@form" 
-                                                 icon="pi pi-check" 
-                                                 styleClass="ui-button-success ui-button-sm" 
-                                                 style="margin-right: 5px;" />
-                                <p:commandButton value="Reject" 
-                                                 action="#{assetRequestBean.rejectRequest(req.requestId)}" 
-                                                 update="@form" 
-                                                 icon="pi pi-times" 
-                                                 styleClass="ui-button-danger ui-button-sm" />
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{req.status != 'Pending'}">
-                                <h:outputText value="Action Completed" style="color: #9ca3af; font-size: 13px; font-style: italic;" />
-                            </h:panelGroup>
-                        </p:column>
-                    </p:dataTable>
-                </h:form>
-            </div>
+                                <p:column headerText="Actions" style="text-align: center; width: 180px;">
+                                    <h:panelGroup rendered="#{req.status == 'Pending'}">
+                                        <p:commandButton value="Approve" 
+                                                         action="#{assetRequestBean.approveRequest(req.requestId)}" 
+                                                         update="@form :adminAssetTabView:assetsInventoryTableForm :adminAssetTabView:assetCrudForm" 
+                                                         icon="pi pi-check" 
+                                                         styleClass="ui-button-success ui-button-sm" 
+                                                         style="margin-right: 5px;" />
+                                        <p:commandButton value="Reject" 
+                                                         action="#{assetRequestBean.rejectRequest(req.requestId)}" 
+                                                         update="@form" 
+                                                         icon="pi pi-times" 
+                                                         styleClass="ui-button-danger ui-button-sm" />
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{req.status != 'Pending'}">
+                                        <h:outputText value="Completed" style="color: #9ca3af; font-size: 13px; font-style: italic;" />
+                                    </h:panelGroup>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </div>
+                </p:tab>
+                
+                <p:tab title="Asset Inventory">
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <!-- Add/Edit Asset Form -->
+                        <div class="card" style="flex: 1; min-width: 300px; box-shadow: none; border: 1px solid var(--border-color);">
+                            <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px;">
+                                <h:outputText value="#{assetRequestBean.selectedAsset == null ? 'Add New Asset' : 'Edit Asset'}" />
+                            </h3>
+                            <h:form id="assetCrudForm">
+                                <p:messages id="assetCrudMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
+                                <div class="ui-fluid">
+                                    <!-- Add Mode -->
+                                    <h:panelGroup rendered="#{assetRequestBean.selectedAsset == null}">
+                                        <div style="margin-bottom: 15px;">
+                                            <p:outputLabel for="addName" value="Asset Name" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                            <p:inputText id="addName" value="#{assetRequestBean.newAsset.name}" required="true" requiredMessage="Name is required" />
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                            <p:outputLabel for="addQty" value="Available Quantity" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                            <p:spinner id="addQty" value="#{assetRequestBean.newAsset.quantity}" min="0" required="true" />
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                            <p:outputLabel for="addDesc" value="Description" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                            <p:inputTextarea id="addDesc" value="#{assetRequestBean.newAsset.description}" rows="3" />
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <p:commandButton value="Add Asset" action="#{assetRequestBean.addAsset}" update="@form :adminAssetTabView:assetsInventoryTableForm" icon="pi pi-plus" styleClass="ui-button-success" />
+                                        </div>
+                                    </h:panelGroup>
+                                    
+                                    <!-- Edit Mode -->
+                                    <h:panelGroup rendered="#{assetRequestBean.selectedAsset != null}">
+                                        <div style="margin-bottom: 15px;">
+                                            <p:outputLabel for="editName" value="Asset Name" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                            <p:inputText id="editName" value="#{assetRequestBean.selectedAsset.name}" required="true" requiredMessage="Name is required" />
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                            <p:outputLabel for="editQty" value="Available Quantity" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                            <p:spinner id="editQty" value="#{assetRequestBean.selectedAsset.quantity}" min="0" required="true" />
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                            <p:outputLabel for="editDesc" value="Description" style="font-weight: 600; margin-bottom: 5px; display: block;" />
+                                            <p:inputTextarea id="editDesc" value="#{assetRequestBean.selectedAsset.description}" rows="3" />
+                                        </div>
+                                        <div style="text-align: right; display: flex; justify-content: flex-end; gap: 10px;">
+                                            <p:commandButton value="Cancel" action="#{assetRequestBean.cancelEdit}" update="@form" icon="pi pi-times" styleClass="ui-button-secondary" />
+                                            <p:commandButton value="Save Changes" action="#{assetRequestBean.updateAsset}" update="@form :adminAssetTabView:assetsInventoryTableForm" icon="pi pi-save" styleClass="ui-button-primary" />
+                                        </div>
+                                    </h:panelGroup>
+                                </div>
+                            </h:form>
+                        </div>
+                        
+                        <!-- Assets Inventory List Table -->
+                        <div class="card" style="flex: 2; min-width: 450px; box-shadow: none; border: 1px solid var(--border-color);">
+                            <h3 style="margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px;">
+                                <i class="pi pi-table" style="color: #3b82f6;"></i> Current Assets Inventory
+                            </h3>
+                            <h:form id="assetsInventoryTableForm">
+                                <p:messages id="assetsInventoryTableMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
+                                <p:dataTable value="#{assetRequestBean.availableAssets}" var="asset" 
+                                             paginator="true" rows="5" paginatorPosition="bottom"
+                                             reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines">
+                                    <p:column headerText="ID" style="width: 50px; text-align: center;">
+                                        <h:outputText value="#{asset.assetId}" />
+                                    </p:column>
+                                    <p:column headerText="Asset Name" sortBy="#{asset.name}">
+                                        <h:outputText value="#{asset.name}" style="font-weight: 600;" />
+                                    </p:column>
+                                    <p:column headerText="Available Qty" sortBy="#{asset.quantity}" style="width: 120px; text-align: center;">
+                                        <h:outputText value="#{asset.quantity}" style="font-weight: bold; color: #{asset.quantity == 0 ? '#ef4444' : 'inherit'};" />
+                                    </p:column>
+                                    <p:column headerText="Description">
+                                        <h:outputText value="#{asset.description}" />
+                                    </p:column>
+                                    <p:column headerText="Actions" style="text-align: center; width: 150px;">
+                                        <p:commandButton icon="pi pi-pencil" 
+                                                         action="#{assetRequestBean.selectAssetForEdit(asset)}" 
+                                                         update=":adminAssetTabView:assetCrudForm" 
+                                                         styleClass="ui-button-warning ui-button-flat" 
+                                                         style="margin-right: 5px;" 
+                                                         title="Edit" />
+                                        <p:commandButton icon="pi pi-trash" 
+                                                         action="#{assetRequestBean.deleteAsset(asset.assetId)}" 
+                                                         update="@form :adminAssetTabView:assetCrudForm" 
+                                                         styleClass="ui-button-danger ui-button-flat" 
+                                                         title="Delete">
+                                            <p:confirm header="Confirmation" message="Are you sure you want to delete this asset from inventory?" icon="pi pi-exclamation-triangle" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                                
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" />
+                                </p:confirmDialog>
+                            </h:form>
+                        </div>
+                    </div>
+                </p:tab>
+            </p:tabView>
         </h:panelGroup>
     </ui:define>
 </ui:composition>

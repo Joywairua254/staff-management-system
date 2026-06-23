@@ -30,4 +30,20 @@ public class AnnouncementService {
     public void removeAnnouncement(int id) throws SQLException {
         announcementDAO.deleteAnnouncement(id);
     }
+
+    public boolean hasUnreadAnnouncements(int staffId) throws SQLException {
+        int maxId = announcementDAO.getMaxAnnouncementId();
+        if (maxId == 0) {
+            return false;
+        }
+        int lastRead = announcementDAO.getLastReadAnnouncementId(staffId);
+        return maxId > lastRead;
+    }
+
+    public void markAnnouncementsAsRead(int staffId) throws SQLException {
+        int maxId = announcementDAO.getMaxAnnouncementId();
+        if (maxId > 0) {
+            announcementDAO.setLastReadAnnouncementId(staffId, maxId);
+        }
+    }
 }

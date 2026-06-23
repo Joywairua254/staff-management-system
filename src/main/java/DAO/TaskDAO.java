@@ -172,4 +172,17 @@ public class TaskDAO {
             stmt.executeUpdate();
         }
     }
+
+    public Task getTaskById(int taskId) throws SQLException {
+        String sql = "SELECT * FROM task WHERE task_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, taskId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+            }
+        }
+        return null;
+    }
 }

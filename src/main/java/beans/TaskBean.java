@@ -267,23 +267,32 @@ public class TaskBean implements Serializable {
 
     public void uploadTaskDoc(int taskId) {
         try {
+            Connection conn = DBConnection.getConnection();
+            if (conn != null) {
+                TaskService ts = new TaskService(conn);
+                Task dbTask = ts.getTaskById(taskId);
+                if (dbTask != null && isDeadlineReached(dbTask)) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Deadline is already reached."));
+                    return;
+                }
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Database connection error."));
+                return;
+            }
+
             if (taskFile != null) {
                 try (InputStream input = taskFile.getInputStream()) {
                     byte[] bytes = input.readAllBytes();
                     if (bytes.length > 0) {
                         String base64 = Base64.getEncoder().encodeToString(bytes);
                         String filename = taskFile.getSubmittedFileName();
-                        Connection conn = DBConnection.getConnection();
-                        if (conn != null) {
-                            TaskService ts = new TaskService(conn);
-                            ts.submitTaskDocument(taskId, base64, filename);
-                            FacesContext.getCurrentInstance().addMessage(null,
-                                new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Task document uploaded successfully!"));
-                            loadAllTasks();
-                        } else {
-                            FacesContext.getCurrentInstance().addMessage(null,
-                                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Database connection error."));
-                        }
+                        TaskService ts = new TaskService(conn);
+                        ts.submitTaskDocument(taskId, base64, filename);
+                        FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Task document uploaded successfully!"));
+                        loadAllTasks();
                     } else {
                         FacesContext.getCurrentInstance().addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning", "Selected file is empty."));
@@ -333,6 +342,12 @@ public class TaskBean implements Serializable {
                 Connection conn = DBConnection.getConnection();
                 if (conn != null) {
                     TaskService ts = new TaskService(conn);
+                    Task dbTask = ts.getTaskById(selectedTask.getTaskId());
+                    if (dbTask != null && isDeadlineReached(dbTask)) {
+                        FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Deadline is already reached."));
+                        return;
+                    }
                     ts.updateStaffComment(selectedTask.getTaskId(), selectedTask.getStaffComment());
                     FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Your comment saved successfully."));

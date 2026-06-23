@@ -21,6 +21,38 @@ public class PasswordMigrationListener implements ServletContextListener {
                 System.err.println("PasswordMigrationListener: Database connection is null. Migration skipped.");
                 return;
             }
+
+            // Ensure user_announcement_read table exists
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute("CREATE TABLE IF NOT EXISTS user_announcement_read (" +
+                             "staff_id INT NOT NULL, " +
+                             "last_read_announcement_id INT NOT NULL, " +
+                             "PRIMARY KEY (staff_id))");
+                System.out.println("PasswordMigrationListener: Verified user_announcement_read table exists.");
+            }
+
+            // Ensure asset table exists and pre-populate if empty
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute("CREATE TABLE IF NOT EXISTS asset (" +
+                             "asset_id INT AUTO_INCREMENT PRIMARY KEY, " +
+                             "name VARCHAR(255) NOT NULL UNIQUE, " +
+                             "quantity INT NOT NULL DEFAULT 0, " +
+                             "description VARCHAR(255))");
+                System.out.println("PasswordMigrationListener: Verified asset table exists.");
+                
+                // Seed assets if empty
+                try (ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM asset")) {
+                    if (rs.next() && rs.getInt(1) == 0) {
+                        stmt.execute("INSERT INTO asset (name, quantity, description) VALUES " +
+                                     "('Laptop', 10, 'Standard office laptop'), " +
+                                     "('Ergonomic Chair', 5, 'Adjustable back support office chair'), " +
+                                     "('Monitor 24\"', 8, 'Full HD dual monitor setup'), " +
+                                     "('Keyboard & Mouse Combo', 15, 'Wireless keyboard and mouse combo'), " +
+                                     "('Headset', 12, 'Noise cancelling usb headset')");
+                        System.out.println("PasswordMigrationListener: Seeded asset table with default data.");
+                    }
+                }
+            }
             
             // Get all users
             String selectSql = "SELECT user_id, password FROM user_account WHERE is_hashed = 0";

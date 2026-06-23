@@ -57,4 +57,8 @@ public class TaskService {
     public void updateStaffComment(int taskId, String comment) throws SQLException {
         taskDAO.updateStaffComment(taskId, comment);
     }
+
+    public Task getTaskById(int taskId) throws SQLException {
+        return taskDAO.getTaskById(taskId);
+    }
 }

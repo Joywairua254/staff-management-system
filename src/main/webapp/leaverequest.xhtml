@@ -19,6 +19,7 @@
                         <i class="pi pi-calendar-plus" style="font-size: 20px; color: #3b82f6;"></i> Request Leave
                     </h3>
                     <h:form id="leaveRequestForm">
+                        <p:messages id="leaveRequestMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
                         <div class="ui-fluid">
                             <div style="margin-bottom: 15px;">
                                 <p:outputLabel for="leaveType" value="Leave Type" style="font-weight: 600; margin-bottom: 5px; display: block;" />
@@ -66,6 +67,7 @@
                         <i class="pi pi-history" style="font-size: 20px; color: #3b82f6;"></i> Request History
                     </h3>
                     <h:form id="myLeaveHistoryForm">
+                        <p:messages id="myLeaveHistoryMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
                         <p:dataTable value="#{leaveRequestBean.getUserRequests(loginbean.staffId)}" var="req" 
                                      paginator="true" rows="5" paginatorPosition="bottom"
                                      reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
@@ -102,6 +104,23 @@
                                         <i class="pi pi-times-circle" style="margin-right: 4px; vertical-align: middle;"></i>Rejected
                                     </span>
                                 </h:panelGroup>
+                                <h:panelGroup rendered="#{req.status == 'Cancelled'}">
+                                    <span class="ui-tag-danger" style="background-color: #f3f4f6; color: #4b5563; border-color: #e5e7eb;">
+                                        <i class="pi pi-ban" style="margin-right: 4px; vertical-align: middle;"></i>Cancelled
+                                    </span>
+                                </h:panelGroup>
+                            </p:column>
+                            <p:column headerText="Actions" style="text-align: center; width: 120px;">
+                                <h:panelGroup rendered="#{req.status == 'Pending'}">
+                                    <p:commandButton value="Cancel" 
+                                                     action="#{leaveRequestBean.cancelRequest(req.leaveId, loginbean.staffId)}" 
+                                                     update="@form" 
+                                                     icon="pi pi-ban" 
+                                                     styleClass="ui-button-secondary ui-button-sm" />
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{req.status != 'Pending'}">
+                                    <h:outputText value="N/A" style="color: #9ca3af; font-style: italic;" />
+                                </h:panelGroup>
                             </p:column>
                         </p:dataTable>
                     </h:form>
@@ -117,6 +136,7 @@
                 </h2>
                 
                 <h:form id="adminLeavesForm" style="margin-top: 20px;">
+                    <p:messages id="adminLeavesMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
                     <p:dataTable value="#{leaveRequestBean.allRequests}" var="req" 
                                  paginator="true" rows="10" paginatorPosition="bottom"
                                  reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
@@ -164,6 +184,11 @@
                             <h:panelGroup rendered="#{req.status == 'Rejected'}">
                                 <span class="ui-tag-danger" style="background-color: #fef2f2; color: #ef4444; border-color: #fecaca; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
                                     <i class="pi pi-times-circle" style="margin-right: 4px; vertical-align: middle;"></i>Rejected
+                                </span>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{req.status == 'Cancelled'}">
+                                <span class="ui-tag-secondary" style="background-color: #f3f4f6; color: #4b5563; border-color: #e5e7eb; display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
+                                    <i class="pi pi-ban" style="margin-right: 4px; vertical-align: middle;"></i>Cancelled
                                 </span>
                             </h:panelGroup>
                         </p:column>

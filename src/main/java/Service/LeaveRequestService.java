@@ -38,9 +38,13 @@ public class LeaveRequestService {
     }
 
     public void updateLeaveStatus(int leaveId, String status) throws SQLException {
-        if (status == null || (!status.equals("Approved") && !status.equals("Rejected") && !status.equals("Pending"))) {
+        if (status == null || (!status.equals("Approved") && !status.equals("Rejected") && !status.equals("Pending") && !status.equals("Cancelled"))) {
             throw new IllegalArgumentException("Invalid status value.");
         }
         leaveRequestDAO.updateLeaveStatus(leaveId, status);
+    }
+
+    public boolean cancelLeaveRequest(int leaveId) throws SQLException {
+        return leaveRequestDAO.cancelLeaveRequest(leaveId);
     }
 }

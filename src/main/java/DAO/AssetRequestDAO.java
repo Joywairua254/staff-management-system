@@ -65,6 +65,27 @@ public class AssetRequestDAO {
         }
     }
 
+    public AssetRequest getAssetRequestById(int requestId) throws SQLException {
+        String sql = "SELECT * FROM asset_request WHERE request_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, requestId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean cancelAssetRequest(int requestId) throws SQLException {
+        String sql = "UPDATE asset_request SET status = 'Cancelled' WHERE request_id = ? AND status = 'Pending'";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, requestId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
     private AssetRequest mapRow(ResultSet rs) throws SQLException {
         Timestamp ts = rs.getTimestamp("created_at");
         LocalDateTime created = ts != null ? ts.toLocalDateTime() : null;

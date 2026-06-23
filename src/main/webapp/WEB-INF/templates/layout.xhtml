@@ -53,6 +53,27 @@
             --table-header-text: #94a3b8;
             --link-color: #60a5fa;
         }
+        .notification-bell-btn {
+            position: relative !important;
+            overflow: visible !important;
+        }
+        .notification-bell-btn .ui-badge {
+            position: absolute !important;
+            background-color: #ef4444 !important;
+            color: #ef4444 !important;
+            min-width: 8px !important;
+            height: 8px !important;
+            width: 8px !important;
+            border-radius: 50% !important;
+            padding: 0 !important;
+            top: 1px !important;
+            right: 1px !important;
+            border: 1.5px solid #1e3a8a !important;
+            display: block !important;
+            text-indent: -9999px !important;
+            overflow: hidden !important;
+            z-index: 10 !important;
+        }
 
         body {
             font-family: 'Outfit', 'Inter', 'Segoe UI', Arial, sans-serif;
@@ -355,9 +376,20 @@
                     <i id="theme-icon" class="pi pi-moon" style="font-size: 14px;"></i>
                 </button>
 
-                <!-- Announcement Bell for everyone -->
-                <p:commandButton id="announcementBell" type="button" icon="pi pi-bell" badge="#{empty announcementBean.announcementsList ? '' : announcementBean.announcementsList.size()}" styleClass="ui-button-rounded ui-button-text ui-button-plain" style="color: white; font-size: 15px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%;" />
-                <p:overlayPanel for="announcementBell" dismissable="true" showCloseIcon="true" style="width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 8px; padding: 15px;">
+                <!-- Announcement Bell for non-admin users -->
+                <p:commandButton id="announcementBell" 
+                                 type="button" 
+                                 icon="pi pi-bell" 
+                                 rendered="#{loginbean.usertype != 1}" 
+                                 badge="#{announcementBean.hasUnreadAnnouncements(loginbean.staffId) ? '•' : null}" 
+                                 styleClass="ui-button-rounded ui-button-text ui-button-plain notification-bell-btn" 
+                                 style="color: white; font-size: 15px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%;" />
+                <p:overlayPanel for="announcementBell" 
+                                rendered="#{loginbean.usertype != 1}" 
+                                dismissable="true" 
+                                showCloseIcon="true" 
+                                style="width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-radius: 8px; padding: 15px;">
+                    <p:ajax event="show" listener="#{announcementBean.markAsRead(loginbean.staffId)}" update="headerForm:announcementBell" />
                     <h3 style="margin-top: 0; color: var(--heading-color); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
                         <i class="pi pi-megaphone" style="color: #3b82f6;"></i> Company Announcements
                     </h3>
@@ -465,10 +497,7 @@
         <!-- Main Content -->
         <div class="main-content">
             <div>
-                <!-- Alert Messages -->
-                <p:messages id="globalMsgs" showDetail="true" closable="true" style="margin-bottom: 20px;">
-                    <p:autoUpdate />
-                </p:messages>
+
 
                 <ui:insert name="content">
                     <!-- Default Content -->

@@ -56,4 +56,39 @@ public class AnnouncementDAO {
             stmt.executeUpdate();
         }
     }
+
+    public int getMaxAnnouncementId() throws SQLException {
+        String sql = "SELECT MAX(announcement_id) FROM announcement";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    public int getLastReadAnnouncementId(int staffId) throws SQLException {
+        String sql = "SELECT last_read_announcement_id FROM user_announcement_read WHERE staff_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, staffId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
+    public void setLastReadAnnouncementId(int staffId, int announcementId) throws SQLException {
+        String sql = "INSERT INTO user_announcement_read (staff_id, last_read_announcement_id) VALUES (?, ?) " +
+                     "ON DUPLICATE KEY UPDATE last_read_announcement_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, staffId);
+            stmt.setInt(2, announcementId);
+            stmt.setInt(3, announcementId);
+            stmt.executeUpdate();
+        }
+    }
 }

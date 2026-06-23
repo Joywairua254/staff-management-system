@@ -107,4 +107,33 @@ public class AnnouncementBean implements Serializable {
 
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
+
+    public boolean hasUnreadAnnouncements(int staffId) {
+        if (staffId <= 0) {
+            return false;
+        }
+        try (Connection conn = DBConnection.getConnection()) {
+            if (conn != null) {
+                AnnouncementService service = new AnnouncementService(conn);
+                return service.hasUnreadAnnouncements(staffId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void markAsRead(int staffId) {
+        if (staffId <= 0) {
+            return;
+        }
+        try (Connection conn = DBConnection.getConnection()) {
+            if (conn != null) {
+                AnnouncementService service = new AnnouncementService(conn);
+                service.markAnnouncementsAsRead(staffId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

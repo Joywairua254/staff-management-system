@@ -35,9 +35,17 @@ public class AssetRequestService {
     }
 
     public void updateAssetStatus(int requestId, String status) throws SQLException {
-        if (status == null || (!status.equals("Approved") && !status.equals("Rejected") && !status.equals("Pending"))) {
+        if (status == null || (!status.equals("Approved") && !status.equals("Rejected") && !status.equals("Pending") && !status.equals("Cancelled"))) {
             throw new IllegalArgumentException("Invalid status value.");
         }
         assetRequestDAO.updateAssetStatus(requestId, status);
+    }
+
+    public AssetRequest getAssetRequestById(int requestId) throws SQLException {
+        return assetRequestDAO.getAssetRequestById(requestId);
+    }
+
+    public boolean cancelAssetRequest(int requestId) throws SQLException {
+        return assetRequestDAO.cancelAssetRequest(requestId);
     }
 }

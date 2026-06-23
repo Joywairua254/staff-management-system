@@ -9,6 +9,7 @@
 
     <ui:define name="content">
         <h:form id="attendanceForm">
+            <p:messages id="attendanceListMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
             <!-- Admin View: View previous attendance logs and manage attendance -->
             <h:panelGroup rendered="#{loginbean.usertype == 1}" layout="block">
                 <div class="card">

@@ -67,6 +67,14 @@ public class LeaveRequestDAO {
         }
     }
 
+    public boolean cancelLeaveRequest(int leaveId) throws SQLException {
+        String sql = "UPDATE leave_request SET status = 'Cancelled' WHERE leave_id = ? AND status = 'Pending'";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, leaveId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
     private LeaveRequest mapRow(ResultSet rs) throws SQLException {
         Date startDVal = rs.getDate("start_date");
         LocalDate startD = startDVal != null ? startDVal.toLocalDate() : null;

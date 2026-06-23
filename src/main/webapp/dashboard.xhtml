@@ -45,6 +45,17 @@
                         <i class="pi pi-id-card" style="font-size: 24px;"></i>
                     </div>
                 </div>
+
+                <!-- Staff On Leave Card -->
+                <div class="card" style="flex: 1; min-width: 220px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #ef4444; margin-bottom: 0;">
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 600;">Staff On Leave</h3>
+                        <span style="font-size: 28px; font-weight: 700; color: #1f2937;">#{leaveRequestBean.activeLeaves.size()}</span>
+                    </div>
+                    <div style="background-color: #fef2f2; padding: 12px; border-radius: 50%; color: #ef4444;">
+                        <i class="pi pi-calendar-times" style="font-size: 24px;"></i>
+                    </div>
+                </div>
             </div>
 
             <div class="card" style="margin-top: 25px; min-height: 200px;">
@@ -83,6 +94,7 @@
                         </div>
 
                         <h:form id="attendanceActionForm">
+                            <p:messages id="dashboardMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
                             <!-- Variable containing today's attendance -->
                             <ui:param name="todayAtt" value="#{attendanceBean.getTodayAttendance(loginbean.staffId)}" />
                             

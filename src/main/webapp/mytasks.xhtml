@@ -16,6 +16,7 @@
             </h3>
             
             <h:form id="taskSubmissionForm" enctype="multipart/form-data">
+                <p:messages id="taskSubmissionMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
                 <p:dataTable value="#{taskBean.getUserTasks(loginbean.staffId)}" var="task"
                              paginator="true" rows="5" paginatorPosition="bottom"
                              reflow="true" styleClass="ui-datatable-striped ui-datatable-gridlines"
@@ -43,10 +44,16 @@
                                 <span style="color: #9ca3af; font-style: italic;">No file uploaded</span>
                             </h:panelGroup>
                             
-                            <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+                            <h:panelGroup rendered="#{not taskBean.isDeadlineReached(task)}" layout="block" style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
                                 <h:inputFile value="#{taskBean.taskFile}" style="font-size: 11px; width: 140px;" />
                                 <h:commandButton value="Upload" action="#{taskBean.uploadTaskDoc(task.taskId)}" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" style="padding: 3px 8px; background-color: #3b82f6; color: white; border: none; cursor: pointer; border-radius: 4px; font-size: 11px; font-weight: 600;" />
-                            </div>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{taskBean.isDeadlineReached(task)}" layout="block">
+                                <div style="color: #ef4444; font-weight: 600; display: flex; align-items: center; gap: 4px; margin-top: 4px; font-size: 11px; background-color: #fef2f2; padding: 4px 8px; border-radius: 4px; border: 1px solid #fecaca; width: fit-content;">
+                                    <i class="pi pi-exclamation-circle" style="font-size: 12px;"></i>
+                                    <span>Deadline reached (Submissions closed)</span>
+                                </div>
+                            </h:panelGroup>
                         </div>
                     </p:column>
                     
@@ -92,8 +99,16 @@
         <!-- Staff Comment Dialog -->
         <p:dialog header="Task Comment" widgetVar="commentDialog" modal="true" responsive="true" width="400" showEffect="fade" hideEffect="fade" styleClass="ui-dialog">
             <h:form id="commentDialogForm">
+                <p:messages id="commentDialogMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
                 <h:panelGroup rendered="#{not empty taskBean.selectedTask}">
                     <div class="ui-fluid">
+                        <h:panelGroup rendered="#{taskBean.isDeadlineReached(taskBean.selectedTask)}" layout="block">
+                            <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 4px; padding: 10px; margin-bottom: 15px; color: #ef4444; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                                <i class="pi pi-exclamation-triangle" style="font-size: 16px;"></i>
+                                <span>Deadline is already reached.</span>
+                            </div>
+                        </h:panelGroup>
+
                         <div style="margin-bottom: 15px;">
                             <strong>Task Description:</strong>
                             <p style="margin: 5px 0 0 0; color: var(--card-text-mute); font-size: 13px;">#{taskBean.selectedTask.description}</p>
@@ -108,12 +123,12 @@
 
                         <div style="margin-bottom: 20px;">
                             <p:outputLabel for="staffCommentInput" value="My Comment / Notes" style="font-weight: 600; display: block; margin-bottom: 5px;" />
-                            <p:inputTextarea id="staffCommentInput" value="#{taskBean.selectedTask.staffComment}" rows="4" autoResize="false" placeholder="Add a comment about your progress or submission..." />
+                            <p:inputTextarea id="staffCommentInput" value="#{taskBean.selectedTask.staffComment}" rows="4" autoResize="false" placeholder="Add a comment about your progress or submission..." disabled="#{taskBean.isDeadlineReached(taskBean.selectedTask)}" />
                         </div>
 
                         <div style="text-align: right; display: flex; justify-content: flex-end; gap: 10px;">
                             <p:commandButton value="Cancel" type="button" onclick="PF('commentDialog').hide();" styleClass="ui-button-outlined ui-button-secondary" style="width: 100px;" />
-                            <p:commandButton value="Save Comment" action="#{taskBean.saveStaffComment}" update=":taskSubmissionForm" oncomplete="PF('commentDialog').hide();" styleClass="ui-button-success" style="width: 130px;" />
+                            <p:commandButton value="Save Comment" action="#{taskBean.saveStaffComment}" update=":taskSubmissionForm" oncomplete="PF('commentDialog').hide();" styleClass="ui-button-success" style="width: 130px;" disabled="#{taskBean.isDeadlineReached(taskBean.selectedTask)}" />
                         </div>
                     </div>
                 </h:panelGroup>

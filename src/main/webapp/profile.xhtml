@@ -16,6 +16,7 @@
                     <i class="pi pi-user-edit" style="font-size: 20px; color: #3b82f6;"></i> Update Profile Details
                 </h3>
                 <h:form id="profileForm" style="margin-top: 15px;" enctype="multipart/form-data">
+                    <p:messages id="profileMsgs" showDetail="true" closable="true" style="margin-bottom: 15px;" />
                     <!-- Profile Image Section -->
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 25px; background-color: var(--main-bg); padding: 20px; border-radius: 12px; border: 1px dashed var(--border-color);">
                         <h:panelGroup rendered="#{not empty loginbean.currentStaff.profilePic}">
